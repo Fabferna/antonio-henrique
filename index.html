@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfólio | Visual & Motion</title>
+    <meta name="description" content="Portfólio de Design, Motion Graphics e Identidade Visual de Antônio Henrique.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="src/styles/style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">Antônio Henrique<span class="dot">.</span></a>
+            <button class="mobile-menu-btn" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+            <ul class="nav-links">
+                <li><a href="#posters">Galeria</a></li>
+                <li><a href="#branding">Branding</a></li>
+                <li><a href="#motion">Motion</a></li>
+                <li><a href="#audio">Música</a></li>
+                <li><a href="#studio">Sobre</a></li>
+                <li><a href="#contact" class="btn-nav">Conectar</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="mobile-nav-overlay">
+        <button class="close-menu-btn">×</button>
+        <ul class="mobile-links">
+            <li><a href="#posters">Galeria</a></li>
+            <li><a href="#branding">Branding</a></li>
+            <li><a href="#motion">Motion</a></li>
+            <li><a href="#audio">Música</a></li>
+            <li><a href="#studio">Sobre</a></li>
+            <li><a href="#contact">Conectar</a></li>
+        </ul>
+    </div>
+
+    <section id="posters" class="section-carousel fade-up">
+        <div class="container">
+            <div class="carousel-intro">
+                <h1>Visual & <span class="highlight">Motion</span></h1>
+            </div>
+        </div>
+        
+        <div class="carousel-wrapper glow-effect">
+            <div class="carousel-track-container">
+                <ul class="carousel-track">
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/artorias-poster-3.webp', 'Artorias 03', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/artorias-poster-3.webp" alt="Artorias Poster 3"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/augustinho-dance-3.mp4', 'Augustinho Dance', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/augustinho-dance-3.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/artorias-poster-4.webp', 'Artorias 04', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/artorias-poster-4.webp" alt="Artorias Poster 4"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/auto-da-compadecida-poster-2.webp', 'Auto da Compadecida', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/auto-da-compadecida-poster-2.webp" alt="Auto da Compadecida Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/chainsawman-poster-1.mp4', 'Chainsaw Man', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/chainsawman-poster-1.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/coraline.webp', 'Coraline', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/coraline.webp" alt="Coraline Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/dandadan-motion-poster-1.mp4', 'Dandadan Motion', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/dandadan-motion-poster-1.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/dark-souls-motion-poster-4.webp', 'Dark Souls', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/dark-souls-motion-poster-4.webp" alt="Dark Souls Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/drink-poster.webp', 'Drink Poster', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/drink-poster.webp" alt="Drink Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/elden-ring-samurai-poster-1.webp', 'Elden Ring Samurai 01', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/elden-ring-samurai-poster-1.webp" alt="Elden Ring Poster 1"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/elden-ring-samurai-poster-2.webp', 'Elden Ring Samurai 02', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/elden-ring-samurai-poster-2.webp" alt="Elden Ring Poster 2"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/elden-ring-samurai-poster-3.webp', 'Elden Ring Samurai 03', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/elden-ring-samurai-poster-3.webp" alt="Elden Ring Poster 3"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/fez-poster-1.webp', 'Fez', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/fez-poster-1.webp" alt="Fez Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/fifa-98.webp', 'FIFA 98', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/fifa-98.webp" alt="FIFA 98 Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/jujutsu-kaisen-motion-poster-3.mp4', 'Jujutsu Kaisen', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/jujutsu-kaisen-motion-poster-3.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/motion-poster.mp4', 'Abstract Motion', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/motion-poster.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/os-normais-motion-poster.mp4', 'Os Normais', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/os-normais-motion-poster.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/ozzy.webp', 'Ozzy Osbourne', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/ozzy.webp" alt="Ozzy Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/poster-ramen-3.webp', 'Ramen Poster', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/poster-ramen-3.webp" alt="Ramen Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/project-datena-chair-2.mp4', 'Datena Chair', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/project-datena-chair-2.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/projetc-teoe-poster-3.webp', 'Project TEOE', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/projetc-teoe-poster-3.webp" alt="Project TEOE Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/skate-poster-3.webp', 'Skate Poster', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/skate-poster-3.webp" alt="Skate Poster"></div></li>
+
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/artorias-poster-3.webp', 'Artorias 03', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/artorias-poster-3.webp" alt="Artorias Poster 3"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/augustinho-dance-3.mp4', 'Augustinho Dance', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/augustinho-dance-3.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/artorias-poster-4.webp', 'Artorias 04', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/artorias-poster-4.webp" alt="Artorias Poster 4"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/auto-da-compadecida-poster-2.webp', 'Auto da Compadecida', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/auto-da-compadecida-poster-2.webp" alt="Auto da Compadecida Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/chainsawman-poster-1.mp4', 'Chainsaw Man', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/chainsawman-poster-1.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/coraline.webp', 'Coraline', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/coraline.webp" alt="Coraline Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/dandadan-motion-poster-1.mp4', 'Dandadan Motion', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/dandadan-motion-poster-1.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/dark-souls-motion-poster-4.webp', 'Dark Souls', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/dark-souls-motion-poster-4.webp" alt="Dark Souls Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/drink-poster.webp', 'Drink Poster', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/drink-poster.webp" alt="Drink Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/elden-ring-samurai-poster-1.webp', 'Elden Ring Samurai 01', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/elden-ring-samurai-poster-1.webp" alt="Elden Ring Poster 1"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/elden-ring-samurai-poster-2.webp', 'Elden Ring Samurai 02', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/elden-ring-samurai-poster-2.webp" alt="Elden Ring Poster 2"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/elden-ring-samurai-poster-3.webp', 'Elden Ring Samurai 03', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/elden-ring-samurai-poster-3.webp" alt="Elden Ring Poster 3"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/fez-poster-1.webp', 'Fez', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/fez-poster-1.webp" alt="Fez Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/fifa-98.webp', 'FIFA 98', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/fifa-98.webp" alt="FIFA 98 Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/jujutsu-kaisen-motion-poster-3.mp4', 'Jujutsu Kaisen', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/jujutsu-kaisen-motion-poster-3.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/motion-poster.mp4', 'Abstract Motion', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/motion-poster.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/os-normais-motion-poster.mp4', 'Os Normais', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/os-normais-motion-poster.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/ozzy.webp', 'Ozzy Osbourne', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/ozzy.webp" alt="Ozzy Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/poster-ramen-3.webp', 'Ramen Poster', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/poster-ramen-3.webp" alt="Ramen Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/project-datena-chair-2.mp4', 'Datena Chair', 'video')"><div class="poster-content"><video class="poster-media" src="src/img/project-datena-chair-2.mp4" autoplay loop muted playsinline></video></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/projetc-teoe-poster-3.webp', 'Project TEOE', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/projetc-teoe-poster-3.webp" alt="Project TEOE Poster"></div></li>
+                    <li class="carousel-slide" onclick="openMediaModal('src/img/skate-poster-3.webp', 'Skate Poster', 'image')"><div class="poster-content"><img class="poster-media" src="src/img/skate-poster-3.webp" alt="Skate Poster"></div></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="branding" class="section">
+        <div class="container">
+            <div class="section-header fade-up">
+                <h2>Design & Branding</h2>
+            </div>
+
+            <div class="projects-grid branding-grid">
+                
+                <article class="project-card fade-up" onclick="openMediaModal('src/img/branding/branding-1.jpg', 'Engravers Gothic BT', 'image')">
+                    <div class="project-thumb placeholder-bg">
+                        <img src="src/img/thumbnail/tumbnail-1.jpg" alt="Projeto Branding 1" class="img-responsive">
+                    </div>
+                    <div class="project-info">
+                        <h3>Engravers Gothic BT</h3>
+                        <p class="project-cat">Identidade Visual</p>
+                    </div>
+                </article>
+
+                <article class="project-card fade-up" onclick="openMediaModal('src/img/branding/branding-2.jpg', 'Minimal Structure', 'image')">
+                    <div class="project-thumb placeholder-bg">
+                        <img src="src/img/thumbnail/tumbnail-2.jpg" alt="Projeto Branding 2" class="img-responsive">
+                    </div>
+                    <div class="project-info">
+                        <h3>Minimal Structure</h3>
+                        <p class="project-cat">Branding</p>
+                    </div>
+                </article>
+
+                <article class="project-card fade-up" onclick="openMediaModal('src/img/branding/branding-3.jpg', 'Alethia Next', 'image')">
+                    <div class="project-thumb placeholder-bg">
+                        <img src="src/img/thumbnail/tumbnail-3.jpg" alt="Projeto Branding 3" class="img-responsive">
+                    </div>
+                    <div class="project-info">
+                        <h3>Alethia Next</h3>
+                        <p class="project-cat">Logotipo</p>
+                    </div>
+                </article>
+
+                <article class="project-card fade-up" onclick="openMediaModal('src/img/branding/branding-4.jpg', 'Lara França', 'image')">
+                    <div class="project-thumb placeholder-bg">
+                        <img src="src/img/thumbnail/tumbnail-4.jpg" alt="Projeto Branding 4" class="img-responsive">
+                    </div>
+                    <div class="project-info">
+                        <h3>Lara França</h3>
+                        <p class="project-cat">Identidade Corporativa</p>
+                    </div>
+                </article>
+
+                <article class="project-card fade-up" onclick="openMediaModal('src/img/branding/branding-5.jpg', 'Maria de Lourdes', 'image')">
+                    <div class="project-thumb placeholder-bg">
+                        <img src="src/img/thumbnail/tumbnail-5.jpg" alt="Projeto Branding 5" class="img-responsive">
+                    </div>
+                    <div class="project-info">
+                        <h3>Maria de Lourdes</h3>
+                        <p class="project-cat">Advocacia</p>
+                    </div>
+                </article>
+
+                <article class="project-card fade-up" onclick="openMediaModal('src/img/branding/branding-6.jpg', 'Guarda', 'image')">
+                    <div class="project-thumb placeholder-bg">
+                        <img src="src/img/thumbnail/tumbnail-6.jpg" alt="Projeto Branding 6" class="img-responsive">
+                    </div>
+                    <div class="project-info">
+                        <h3>Guarda</h3>
+                        <p class="project-cat">Design de Produto</p>
+                    </div>
+                </article>
+
+            </div>
+
+            <div class="ebooks-section fade-up">
+                <h3 class="subsection-title">Editorial & E-books</h3>
+                <div class="projects-grid ebooks-grid">
+                    
+                    <article class="project-card" onclick="openMediaModal('src/img/thumbnail/ebook-1.jpg', 'Design Editorial 01', 'image')">
+                        <div class="project-thumb placeholder-bg">
+                            <img src="src/img/thumbnail/ebook-1.jpg" alt="Ebook 1" class="img-responsive">
+                        </div>
+                        <div class="project-info">
+                            <h3>Design Editorial 01</h3>
+                            <p class="project-cat">E-book</p>
+                        </div>
+                    </article>
+
+                    <article class="project-card" onclick="openMediaModal('src/img/thumbnail/ebook-2.jpg', 'Layout Digital 02', 'image')">
+                        <div class="project-thumb placeholder-bg">
+                            <img src="src/img/thumbnail/ebook-2.jpg" alt="Ebook 2" class="img-responsive">
+                        </div>
+                        <div class="project-info">
+                            <h3>Layout Digital 02</h3>
+                            <p class="project-cat">Publicação Digital</p>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="motion" class="section bg-alt">
+        <div class="container">
+            <div class="section-header fade-up"><h2>Motion & Films</h2></div>
+            <div class="video-grid">
+                <div class="video-item fade-up" onclick="openMediaModal('Showreel 2024', 'Showreel 2024', 'video-placeholder')">
+                    <div class="video-thumb placeholder-bg">
+                        <div class="play-btn-circle"><span class="play-icon">►</span></div>
+                    </div>
+                    <p class="video-title">Showreel 2024</p>
+                </div>
+                <div class="video-item fade-up" onclick="openMediaModal('Kinetic Type', 'Kinetic Type', 'video-placeholder')">
+                    <div class="video-thumb placeholder-bg">
+                        <div class="play-btn-circle"><span class="play-icon">►</span></div>
+                    </div>
+                    <p class="video-title">Kinetic Type</p>
+                </div>
+                <div class="video-item fade-up" onclick="openMediaModal('Logo Animation', 'Logo Animation', 'video-placeholder')">
+                    <div class="video-thumb placeholder-bg">
+                        <div class="play-btn-circle"><span class="play-icon">►</span></div>
+                    </div>
+                    <p class="video-title">Logo Animation</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="audio" class="section">
+        <div class="container audio-container fade-up">
+            <div class="audio-text">
+                <h3>Minha Música</h3>
+                <p>Composições originais por Antônio Henrique.</p>
+            </div>
+            
+            <div class="spotify-wrapper">
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/42GRQ5uDSeHGl1qAf5bIxj?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <section id="studio" class="section bg-alt">
+        <div class="container about-container">
+            <div class="about-image fade-up">
+                <div class="placeholder-bg portrait">Foto Designer</div>
+            </div>
+            <div class="about-content fade-up">
+                <h2>Menos ruído,<br><span class="highlight">mais sinal.</span></h2>
+                <div class="about-text">
+                    <p>Especialista em identidades que sobrevivem ao tempo. Não entrego apenas layouts, construo ecossistemas visuais que resolvem problemas reais de negócio através de uma estética ousada e funcional.</p>
+                </div>
+                <div class="skills-list">
+                    <span class="skill-chip">Art Direction</span>
+                    <span class="skill-chip">UI/UX</span>
+                    <span class="skill-chip">Motion</span>
+                    <span class="skill-chip">Branding</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section contact-section">
+        <div class="container contact-wrapper fade-up">
+            <h2>Vamos nos conectar?</h2>
+            <p>Disponível para freelance e colaborações.</p>
+            
+            <div class="social-links">
+                <a href="https://www.instagram.com/nuvensgordas/" target="_blank" class="social-icon" aria-label="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    <span>Instagram</span>
+                </a>
+
+                <a href="https://www.linkedin.com/in/antoniohenriquedesign/" target="_blank" class="social-icon" aria-label="LinkedIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                    <span>LinkedIn</span>
+                </a>
+
+                <a href="https://www.behance.net/nuvensgordas" target="_blank" class="social-icon" aria-label="Behance">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 11H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2z"></path><path d="M5 11h14v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7z"></path><line x1="12" y1="11" x2="12" y2="20"></line></svg>
+                    <span>Behance</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Antônio Henrique.</p>
+        </div>
+    </footer>
+
+    <div id="media-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('media-modal')">×</span>
+            <div class="modal-body" id="modal-body-content">
+                </div>
+        </div>
+    </div>
+
+    <script src="src/script/script.js"></script>
+</body>
+</html>
