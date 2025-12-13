@@ -19,23 +19,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBody = document.getElementById('modal-body-content');
 
     // Função unificada para abrir modal
-    // aceita: src (caminho), title (título), type ('image', 'video' ou 'video-placeholder')
+    // aceita: src (caminho/url), title (título), type ('image', 'video', 'video-placeholder' ou 'vimeo')
     window.openMediaModal = function(src, title, type) {
         mediaModal.style.display = 'flex';
         let contentHTML = '';
 
-        if (type === 'video') {
-            // Vídeo MP4 (Posters)
+        if (type === 'vimeo') {
+            // Player Vimeo Responsivo
+            // Adicionado 'autoplay=1' para iniciar ao abrir (opcional)
+            contentHTML = `
+                <div class="vimeo-container">
+                    <iframe src="${src}?autoplay=1&title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            `;
+        } else if (type === 'video') {
+            // Vídeo MP4 Local
             contentHTML = `
                 <video src="${src}" autoplay loop controls playsinline 
                        style="width: 100%; height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 0 20px rgba(244, 230, 0, 0.1);">
                 </video>`;
         } else if (type === 'video-placeholder') {
-            // Apenas placeholder de vídeo (Seção Motion)
-            contentHTML = `<h3 style="color:#fff; text-align:center;">${title} (Video Placeholder)</h3>`;
+            // Placeholder
+            contentHTML = `<h3 style="color:#fff; text-align:center;">${title} (Em breve)</h3>`;
         } else {
-            // Imagem (Posters e Branding)
-            // Aqui garantimos que a imagem completa abra sem cortes (object-fit: contain no CSS do modal)
+            // Imagem
             contentHTML = `<img src="${src}" alt="${title}" style="max-width: 100%; max-height: 85vh; object-fit: contain; border-radius: 4px;">`;
         }
 
@@ -49,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.closeModal = function(modalId) {
         const modal = document.getElementById(modalId);
         modal.style.display = 'none';
-        modalBody.innerHTML = ''; // Limpa conteúdo para parar vídeos
+        modalBody.innerHTML = ''; // Limpa conteúdo (para vídeos)
     }
 
     // Fechar ao clicar fora
