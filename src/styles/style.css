@@ -354,6 +354,31 @@ footer { padding: 2rem 0; text-align: center; font-size: 0.8rem; color: #555; bo
 .fade-up { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
 .fade-up.visible { opacity: 1; transform: translateY(0); }
 
+/* --- NOVOS ESTILOS PARA SETAS DA GALERIA --- */
+.modal-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: var(--accent);
+    font-size: 3rem;
+    padding: 0 15px;
+    cursor: pointer;
+    user-select: none;
+    transition: 0.3s;
+    z-index: 2010;
+    border-radius: 4px;
+    display: none; /* Escondido por padrão, aparece no JS */
+}
+
+.modal-nav:hover {
+    background: var(--accent);
+    color: #111;
+}
+
+.nav-prev { left: -60px; }
+.nav-next { right: -60px; }
+
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 768px) {
     :root { --slide-width: 200px; --slide-gap: 1rem; }
@@ -369,4 +394,9 @@ footer { padding: 2rem 0; text-align: center; font-size: 0.8rem; color: #555; bo
     
     .modal-body img, .modal-body video { max-height: 80vh; }
     .close-modal { top: -40px; right: 0; }
+    
+    /* Ajuste das setas no mobile */
+    .nav-prev { left: 0; }
+    .nav-next { right: 0; }
+    .modal-nav { font-size: 2rem; background: rgba(0,0,0,0.7); }
 }
