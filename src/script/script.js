@@ -401,6 +401,14 @@ function initCounters() {
    9. GALERIA & MODAL
 ═══════════════════════════════════════════════ */
 const GALLERIES = {
+    productDesign: {
+        title: 'Product Design',
+        images: [
+            'src/img/product-design/20.svg',
+            'src/img/product-design/21.svg',
+            'src/img/product-design/22.svg',
+        ]
+    },
     social: {
         title: 'Social Media',
         images: [

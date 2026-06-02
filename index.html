@@ -534,6 +534,40 @@
         </section>
 
         <!-- ══════════════════════════════════════════
+             PRODUCT DESIGN
+        ══════════════════════════════════════════ -->
+        <section id="product-design" class="section section--dark" aria-label="Product Design">
+            <div class="container">
+
+                <header class="section-header section-header--left-only">
+                    <div class="section-header-left">
+                        <p class="section-eyebrow">— Product Design</p>
+                    </div>
+                </header>
+
+                <!-- Capa clicável — abre galeria com as 3 imagens -->
+                <div class="pd-hero"
+                     onclick="openGallery('productDesign', 0)"
+                     role="button" tabindex="0"
+                     aria-label="Ver galeria de Product Design">
+                    <img
+                        src="src/img/product-design/product-design-capa.svg"
+                        alt="Product Design — capa"
+                        class="pd-hero-img">
+                    <div class="pd-hero-overlay" aria-hidden="true">
+                        <span class="pd-hero-cta">
+                            Ver projetos
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                                <path d="M1 13L13 1M13 1H5M13 1V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════
              MOTION & FILMS — SHOWREEL EM DESTAQUE
         ══════════════════════════════════════════ -->
         <section id="motion" class="section section--dark" aria-label="Motion e Films">
@@ -576,6 +610,16 @@
 
                 <!-- Grid de outros vídeos -->
                 <div class="video-grid" role="list">
+
+                    <article class="video-item" onclick="openMediaModal('https://player.vimeo.com/video/1197567323', 'RTM Antifraude', 'vimeo')" role="listitem button" tabindex="0" aria-label="Ver RTM Antifraude">
+                        <div class="video-thumb">
+                            <img src="https://vumbnail.com/1197567323_large.jpg" alt="Nintendo 64 Logo on Blender" class="img-responsive" loading="lazy">
+                            <div class="video-play-overlay" aria-hidden="true">
+                                <span class="video-play-icon">►</span>
+                            </div>
+                        </div>
+                        <p class="video-title">Nintendo 64 Logo on Blender</p>
+                    </article>
 
                     <article class="video-item" onclick="openMediaModal('https://player.vimeo.com/video/1146185264', 'Portfolio Video 2024', 'vimeo')" role="listitem button" tabindex="0" aria-label="Ver Portfolio Video 2024">
                         <div class="video-thumb">
