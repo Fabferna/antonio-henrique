@@ -436,11 +436,11 @@ const mediaModal  = document.getElementById('media-modal');
 const modalBody   = document.getElementById('modal-body-content');
 const navBtns     = document.querySelectorAll('.modal-nav');
 
-/** Abre galeria (social/foto) */
-window.openGallery = function(type) {
+/** Abre galeria (social/foto/productDesign) — startIndex opcional para abrir em imagem específica */
+window.openGallery = function(type, startIndex) {
     if (!GALLERIES[type]) return;
     currentGallery = GALLERIES[type];
-    currentIndex   = 0;
+    currentIndex   = (typeof startIndex === 'number') ? startIndex : 0;
     navBtns.forEach(b => b.style.display = 'flex');
     renderGalleryFrame();
     showModal();
