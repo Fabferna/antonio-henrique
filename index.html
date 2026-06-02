@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antônio Henrique — Designer & Diretor de Arte</title>
+    <meta name="description" content="Portfólio de Antônio Henrique — Designer, Diretor de Arte, Videomaker e Produtor Musical. Branding, Motion Graphics e Identidade Visual.">
+    <meta name="theme-color" content="#0D0D0D">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Antônio Henrique — Designer & Diretor de Arte">
+    <meta property="og:description" content="Design estratégico, motion graphics e identidade visual.">
+    <meta property="og:type" content="website">
+
+    <!-- Preconnect para performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Fontes: Syne (display) + DM Sans (body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+    <!-- GSAP + ScrollTrigger via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+
+    <link rel="stylesheet" href="src/styles/style.css">
+</head>
+<body>
+
+    <!-- ══════════════════════════════════════════
+         CURSOR CUSTOMIZADO
+    ══════════════════════════════════════════ -->
+    <div class="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-ring" aria-hidden="true"></div>
+
+    <!-- ══════════════════════════════════════════
+         LOADER DE ENTRADA
+    ══════════════════════════════════════════ -->
+    <div class="page-loader" id="page-loader" aria-hidden="true">
+        <div class="loader-inner">
+            <span class="loader-name">AH<span class="loader-dot">.</span></span>
+            <div class="loader-bar"><div class="loader-progress"></div></div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SKIP LINK (ACESSIBILIDADE)
+    ══════════════════════════════════════════ -->
+    <a href="#main-content" class="skip-link">Ir para o conteúdo principal</a>
+
+    <!-- ══════════════════════════════════════════
+         NAVEGAÇÃO
+    ══════════════════════════════════════════ -->
+    <header role="banner">
+        <nav class="navbar" aria-label="Navegação principal">
+            <div class="container nav-container">
+                <a href="#" class="logo" aria-label="Antônio Henrique — Home">
+                    AH<span class="logo-dot">.</span>
+                </a>
+
+                <ul class="nav-links" role="list">
+                    <li><a href="#posters">Galeria</a></li>
+                    <li><a href="#branding">Branding</a></li>
+                    <li><a href="#social-media">Social</a></li>
+                    <li><a href="#fotografia">Foto</a></li>
+                    <li><a href="#motion">Motion</a></li>
+                    <li><a href="#audio">Música</a></li>
+                    <li><a href="#studio">Sobre</a></li>
+                    <li>
+                        <a href="#contact" class="btn-nav">
+                            <span>Conectar</span>
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                                <path d="M1 11L11 1M11 1H4M11 1V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+
+                <button class="mobile-menu-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobile-nav">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Menu Mobile -->
+    <div class="mobile-nav-overlay" id="mobile-nav" role="dialog" aria-modal="true" aria-label="Menu de navegação">
+        <button class="close-menu-btn" aria-label="Fechar menu">
+            <span></span><span></span>
+        </button>
+        <nav aria-label="Navegação mobile">
+            <ul class="mobile-links" role="list">
+                <li><a href="#posters"><span class="mobile-link-num">01</span>Galeria</a></li>
+                <li><a href="#branding"><span class="mobile-link-num">02</span>Branding</a></li>
+                <li><a href="#social-media"><span class="mobile-link-num">03</span>Social Media</a></li>
+                <li><a href="#fotografia"><span class="mobile-link-num">04</span>Fotografia</a></li>
+                <li><a href="#motion"><span class="mobile-link-num">05</span>Motion</a></li>
+                <li><a href="#audio"><span class="mobile-link-num">06</span>Música</a></li>
+                <li><a href="#studio"><span class="mobile-link-num">07</span>Sobre</a></li>
+                <li><a href="#contact"><span class="mobile-link-num">08</span>Conectar</a></li>
+            </ul>
+        </nav>
+        <div class="mobile-footer-info">
+            <span>São Paulo, BR</span>
+            <span>© 2025</span>
+        </div>
+    </div>
+
+    <main id="main-content">
+
+        <!-- ══════════════════════════════════════════
+             HERO SECTION
+        ══════════════════════════════════════════ -->
+        <section class="hero" aria-label="Apresentação">
+            <div class="hero-bg-grain" aria-hidden="true"></div>
+            <!-- <div class="hero-accent-line" aria-hidden="true"></div> -->
+
+            <div class="container hero-container">
+                <div class="hero-meta">
+                    <span class="hero-label">Diretor de Arte — Branding — Videomaker</span>
+                    <span class="hero-location">São Paulo, BR</span>
+                </div>
+
+                <h1 class="hero-title" aria-label="Antônio Henrique">
+                    <span class="hero-title-line">
+                        <span class="hero-word reveal-word">Antônio</span>
+                    </span>
+                    <span class="hero-title-line hero-title-line--accent">
+                        <span class="hero-word reveal-word">Henrique</span>
+                        <span class="hero-title-dot reveal-word" aria-hidden="true">.</span>
+                    </span>
+                </h1>
+
+                <div class="hero-bottom">
+                    <p class="hero-desc reveal-fade">
+                        Design estratégico que converte.<br>
+                        Do briefing ao resultado.
+                    </p>
+                    <div class="hero-stats reveal-fade">
+                        <div class="stat">
+                            <span class="stat-num" data-target="8">0</span>
+                            <span class="stat-label">Anos de experiência</span>
+                        </div>
+                        <div class="stat-divider" aria-hidden="true"></div>
+                        <div class="stat">
+                            <span class="stat-num" data-target="60">0</span>
+                            <span class="stat-label">Projetos entregues</span>
+                        </div>
+                        <div class="stat-divider" aria-hidden="true"></div>
+                        <div class="stat">
+                            <span class="stat-num" data-target="5">0</span>
+                            <span class="stat-label">Disciplinas criativas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#posters" class="hero-scroll-cta reveal-fade" aria-label="Rolar para ver os trabalhos">
+                <span class="scroll-label">Ver trabalhos</span>
+                <span class="scroll-arrow" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 1v14M1 8l7 7 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+            </a>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             CARROSSEL — GALERIA DE POSTERS
+        ══════════════════════════════════════════ -->
+        <section id="posters" class="section-carousel" aria-label="Galeria de posters e motion">
+            <div class="section-tag-label" aria-hidden="true">galeria</div>
+            <div class="carousel-wrapper">
+                <div class="carousel-mask" aria-hidden="true"></div>
+                <div class="carousel-track-container">
+                    <!-- Track gerado via JS para evitar duplicação manual no HTML -->
+                    <ul class="carousel-track" id="carousel-track" role="list" aria-label="Galeria de obras">
+
+                        <li class="carousel-slide" data-src="src/img/augustinho-dance-3.mp4" data-title="Augustinho Dance" data-type="video" role="button" tabindex="0" aria-label="Ver Augustinho Dance">
+                            <div class="poster-content">
+                                <video class="poster-media" src="src/img/augustinho-dance-3.mp4" autoplay loop muted playsinline></video>
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/artorias-poster-4.webp" data-title="Artorias 04" data-type="image" role="button" tabindex="0" aria-label="Ver Artorias 04">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/artorias-poster-4.webp" alt="Artorias Poster 4" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/auto-da-compadecida-poster-2.webp" data-title="Auto da Compadecida" data-type="image" role="button" tabindex="0" aria-label="Ver Auto da Compadecida">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/auto-da-compadecida-poster-2.webp" alt="Auto da Compadecida Poster" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/chainsawman-poster-1.mp4" data-title="Chainsaw Man" data-type="video" role="button" tabindex="0" aria-label="Ver Chainsaw Man">
+                            <div class="poster-content">
+                                <video class="poster-media" src="src/img/chainsawman-poster-1.mp4" autoplay loop muted playsinline></video>
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/coraline.webp" data-title="Coraline" data-type="image" role="button" tabindex="0" aria-label="Ver Coraline">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/coraline.webp" alt="Coraline Poster" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/dandadan-motion-poster-1.mp4" data-title="Dandadan Motion" data-type="video" role="button" tabindex="0" aria-label="Ver Dandadan Motion">
+                            <div class="poster-content">
+                                <video class="poster-media" src="src/img/dandadan-motion-poster-1.mp4" autoplay loop muted playsinline></video>
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/dark-souls-motion-poster-4.webp" data-title="Dark Souls" data-type="image" role="button" tabindex="0" aria-label="Ver Dark Souls">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/dark-souls-motion-poster-4.webp" alt="Dark Souls Poster" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/drink-poster.webp" data-title="Drink Poster" data-type="image" role="button" tabindex="0" aria-label="Ver Drink Poster">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/drink-poster.webp" alt="Drink Poster" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/elden-ring-samurai-poster-1.webp" data-title="Elden Ring Samurai 01" data-type="image" role="button" tabindex="0" aria-label="Ver Elden Ring Samurai 01">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/elden-ring-samurai-poster-1.webp" alt="Elden Ring Poster 1" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/elden-ring-samurai-poster-2.webp" data-title="Elden Ring Samurai 02" data-type="image" role="button" tabindex="0" aria-label="Ver Elden Ring Samurai 02">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/elden-ring-samurai-poster-2.webp" alt="Elden Ring Poster 2" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/elden-ring-samurai-poster-3.webp" data-title="Elden Ring Samurai 03" data-type="image" role="button" tabindex="0" aria-label="Ver Elden Ring Samurai 03">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/elden-ring-samurai-poster-3.webp" alt="Elden Ring Poster 3" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/fez-poster-1.webp" data-title="Fez" data-type="image" role="button" tabindex="0" aria-label="Ver Fez">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/fez-poster-1.webp" alt="Fez Poster" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/fifa-98.webp" data-title="FIFA 98" data-type="image" role="button" tabindex="0" aria-label="Ver FIFA 98">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/fifa-98.webp" alt="FIFA 98 Poster" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/jujutsu-kaisen-motion-poster-3.mp4" data-title="Jujutsu Kaisen" data-type="video" role="button" tabindex="0" aria-label="Ver Jujutsu Kaisen">
+                            <div class="poster-content">
+                                <video class="poster-media" src="src/img/jujutsu-kaisen-motion-poster-3.mp4" autoplay loop muted playsinline></video>
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/motion-poster.mp4" data-title="Abstract Motion" data-type="video" role="button" tabindex="0" aria-label="Ver Abstract Motion">
+                            <div class="poster-content">
+                                <video class="poster-media" src="src/img/motion-poster.mp4" autoplay loop muted playsinline></video>
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/os-normais-motion-poster.mp4" data-title="Os Normais" data-type="video" role="button" tabindex="0" aria-label="Ver Os Normais">
+                            <div class="poster-content">
+                                <video class="poster-media" src="src/img/os-normais-motion-poster.mp4" autoplay loop muted playsinline></video>
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/ozzy.webp" data-title="Ozzy Osbourne" data-type="image" role="button" tabindex="0" aria-label="Ver Ozzy Osbourne">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/ozzy.webp" alt="Ozzy Poster" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/poster-ramen-3.webp" data-title="Ramen Poster" data-type="image" role="button" tabindex="0" aria-label="Ver Ramen Poster">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/poster-ramen-3.webp" alt="Ramen Poster" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/project-datena-chair-2.mp4" data-title="Datena Chair" data-type="video" role="button" tabindex="0" aria-label="Ver Datena Chair">
+                            <div class="poster-content">
+                                <video class="poster-media" src="src/img/project-datena-chair-2.mp4" autoplay loop muted playsinline></video>
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/projetc-teoe-poster-3.webp" data-title="Project TEOE" data-type="image" role="button" tabindex="0" aria-label="Ver Project TEOE">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/projetc-teoe-poster-3.webp" alt="Project TEOE Poster" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                        <li class="carousel-slide" data-src="src/img/skate-poster-3.webp" data-title="Skate Poster" data-type="image" role="button" tabindex="0" aria-label="Ver Skate Poster">
+                            <div class="poster-content">
+                                <img class="poster-media" src="src/img/skate-poster-3.webp" alt="Skate Poster" loading="lazy">
+                                <div class="poster-overlay"><span>Ver projeto</span></div>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             BRANDING — DESIGN ESTRATÉGICO
+        ══════════════════════════════════════════ -->
+        <section id="branding" class="section" aria-label="Projetos de Branding">
+            <div class="container">
+
+                <header class="section-header section-header--left-only">
+                    <div class="section-header-left">
+                        <p class="section-eyebrow">02 — Branding</p>
+                    </div>
+                </header>
+
+                <!-- ─── Empresas Parceiras ─── -->
+                <div class="clients-strip" aria-label="Empresas com as quais trabalhei">
+                    <p class="clients-label">Trabalhei com</p>
+                    <div class="clients-grid">
+
+                        <div class="client-item"
+                             onclick="openClientModal('yamaha')"
+                             role="button" tabindex="0"
+                             aria-label="Ver trabalhos para Yamaha">
+                            <img src="src/img/trabalhei/destaque-yamaha.png" alt="Yamaha" class="client-logo" loading="lazy">
+                        </div>
+
+                        <div class="client-item"
+                             onclick="openClientModal('egtc')"
+                             role="button" tabindex="0"
+                             aria-label="Ver trabalhos para EGTC">
+                            <img src="src/img/trabalhei/destaque-egtc.png" alt="EGTC Engetes Infra" class="client-logo" loading="lazy">
+                        </div>
+
+                        <div class="client-item"
+                             onclick="openClientModal('gilbarco')"
+                             role="button" tabindex="0"
+                             aria-label="Ver trabalhos para Gilbarco Veeder-Root">
+                            <img src="src/img/trabalhei/destaque-gilbarco.png" alt="Gilbarco Veeder-Root" class="client-logo" loading="lazy">
+                        </div>
+
+                        <div class="client-item"
+                             onclick="openClientModal('ciee')"
+                             role="button" tabindex="0"
+                             aria-label="Ver trabalhos para CIEE RS">
+                            <img src="src/img/trabalhei/destaque-ciee.png" alt="CIEE RS" class="client-logo" loading="lazy">
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Featured Project -->
+                <article class="project-featured" onclick="openMediaModal('src/img/branding/branding-6.jpg', 'Guarda', 'image')" role="button" tabindex="0" aria-label="Ver projeto Guarda">
+                    <div class="project-featured-thumb">
+                        <img src="src/img/thumbnail/tumbnail-6.jpg" alt="Guarda — Design de Produto" class="img-responsive" loading="lazy">
+                        <div class="project-featured-overlay">
+                            <span class="featured-cta">Ver projeto
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                                    <path d="M1 13L13 1M13 1H5M13 1V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="project-featured-info">
+                        <div>
+                            <h3>Guarda</h3>
+                            <p class="project-cat">Design de Produto</p>
+                        </div>
+                        <span class="project-featured-tag">Destaque</span>
+                    </div>
+                </article>
+
+                <!-- Grid de projetos -->
+                <div class="projects-grid branding-grid" role="list">
+
+                    <article class="project-card" onclick="openMediaModal('src/img/branding/branding-2.jpg', 'DSK Arquitetura', 'image')" role="listitem button" tabindex="0" aria-label="Ver projeto DSK Arquitetura">
+                        <div class="project-thumb">
+                            <img src="src/img/thumbnail/tumbnail-2.jpg" alt="DSK Arquitetura — Branding" class="img-responsive" loading="lazy">
+                            <div class="card-hover-overlay" aria-hidden="true"></div>
+                        </div>
+                        <div class="project-info">
+                            <h3>DSK Arquitetura</h3>
+                            <p class="project-cat">Arquitetura</p>
+                        </div>
+                    </article>
+
+                    <article class="project-card" onclick="openMediaModal('src/img/branding/branding-3.jpg', 'Erica Loredo', 'image')" role="listitem button" tabindex="0" aria-label="Ver projeto Erica Loredo">
+                        <div class="project-thumb">
+                            <img src="src/img/thumbnail/tumbnail-3.jpg" alt="Erica Loredo — Branding" class="img-responsive" loading="lazy">
+                            <div class="card-hover-overlay" aria-hidden="true"></div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Erica Loredo</h3>
+                            <p class="project-cat">Nutricionista</p>
+                        </div>
+                    </article>
+
+                    <article class="project-card" onclick="openMediaModal('src/img/branding/branding-4.jpg', 'Lara França', 'image')" role="listitem button" tabindex="0" aria-label="Ver projeto Lara França">
+                        <div class="project-thumb">
+                            <img src="src/img/thumbnail/tumbnail-4.jpg" alt="Lara França — Branding" class="img-responsive" loading="lazy">
+                            <div class="card-hover-overlay" aria-hidden="true"></div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Lara França</h3>
+                            <p class="project-cat">Endocrinologia</p>
+                        </div>
+                    </article>
+
+                    <article class="project-card" onclick="openMediaModal('src/img/branding/branding-5.jpg', 'Maria de Lourdes', 'image')" role="listitem button" tabindex="0" aria-label="Ver projeto Maria de Lourdes">
+                        <div class="project-thumb">
+                            <img src="src/img/thumbnail/tumbnail-5.jpg" alt="Maria de Lourdes — Branding" class="img-responsive" loading="lazy">
+                            <div class="card-hover-overlay" aria-hidden="true"></div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Maria de Lourdes</h3>
+                            <p class="project-cat">Advocacia</p>
+                        </div>
+                    </article>
+
+                    <article class="project-card" onclick="openMediaModal('src/img/branding/branding-1.jpg', 'Altus Executive', 'image')" role="listitem button" tabindex="0" aria-label="Ver projeto Altus Executive">
+                        <div class="project-thumb">
+                            <img src="src/img/thumbnail/tumbnail-1.jpg" alt="Altus Executive — Identidade Visual" class="img-responsive" loading="lazy">
+                            <div class="card-hover-overlay" aria-hidden="true"></div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Altus Executive</h3>
+                            <p class="project-cat">Automóveis</p>
+                        </div>
+                    </article>
+
+                </div>
+
+                <!-- ─── Social Media ─── -->
+                <div id="social-media" class="subsection">
+                    <div class="subsection-header">
+                        <p class="section-eyebrow">03 — Social Media</p>
+                    </div>
+                    <div class="projects-grid single-grid">
+                        <article class="project-card project-card--wide" onclick="openGallery('social')" role="button" tabindex="0" aria-label="Ver galeria de Social Media">
+                            <div class="project-thumb project-thumb--wide">
+                                <img src="src/img/social-midia/thumbail_socialmedia.jpg" alt="Social Media — Gestão de Conteúdo" class="img-responsive" loading="lazy">
+                                <div class="card-hover-overlay" aria-hidden="true">
+                                    <span class="gallery-cta">Abrir galeria →</span>
+                                </div>
+                            </div>
+                            <div class="project-info">
+                                <h3>Gestão de Conteúdo</h3>
+                                <p class="project-cat">Galeria de trabalhos</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <!-- ─── Fotografia ─── -->
+                <div id="fotografia" class="subsection">
+                    <div class="subsection-header">
+                        <p class="section-eyebrow">04 — Fotografia</p>
+                    </div>
+                    <div class="projects-grid single-grid">
+                        <article class="project-card project-card--wide" onclick="openGallery('foto')" role="button" tabindex="0" aria-label="Ver galeria de Fotografia">
+                            <div class="project-thumb project-thumb--wide">
+                                <img src="src/img/fotografia/thumbail_fotografia.jpg" alt="Fotografia — Olhar Urbano" class="img-responsive" loading="lazy">
+                                <div class="card-hover-overlay" aria-hidden="true">
+                                    <span class="gallery-cta">Abrir galeria →</span>
+                                </div>
+                            </div>
+                            <div class="project-info">
+                                <h3>Olhar Urbano</h3>
+                                <p class="project-cat">Galeria fotográfica</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <!-- ─── E-books ─── -->
+                <div class="subsection">
+                    <div class="subsection-header">
+                        <p class="section-eyebrow">— E-books</p>
+                    </div>
+                    <div class="projects-grid ebooks-grid">
+                        <article class="project-card" onclick="openMediaModal('src/img/thumbnail/ebook-1.jpg', 'Regime de bens sem juridiquês', 'image')" role="button" tabindex="0" aria-label="Ver e-book Regime de bens">
+                            <div class="project-thumb project-thumb--ebook">
+                                <img src="src/img/thumbnail/ebook-1.jpg" alt="E-book: Regime de bens sem juridiquês" class="img-responsive" loading="lazy">
+                                <div class="card-hover-overlay" aria-hidden="true"></div>
+                            </div>
+                            <div class="project-info">
+                                <h3>Regime de bens sem juridiquês</h3>
+                                <p class="project-cat">Maria de Lourdes Moraes</p>
+                            </div>
+                        </article>
+                        <article class="project-card" onclick="openMediaModal('src/img/thumbnail/ebook-2.jpg', 'A Nova Era da Conservação Alimentar no Brasil', 'image')" role="button" tabindex="0" aria-label="Ver e-book Conservação Alimentar">
+                            <div class="project-thumb project-thumb--ebook">
+                                <img src="src/img/thumbnail/ebook-2.jpg" alt="E-book: A Nova Era da Conservação Alimentar no Brasil" class="img-responsive" loading="lazy">
+                                <div class="card-hover-overlay" aria-hidden="true"></div>
+                            </div>
+                            <div class="project-info">
+                                <h3>A Nova Era da Conservação Alimentar no Brasil</h3>
+                                <p class="project-cat">Luxor Food</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             MOTION & FILMS — SHOWREEL EM DESTAQUE
+        ══════════════════════════════════════════ -->
+        <section id="motion" class="section section--dark" aria-label="Motion e Films">
+            <div class="container">
+
+                <header class="section-header section-header--left-only">
+                    <div class="section-header-left">
+                        <p class="section-eyebrow">05 — Motion & Films</p>
+                    </div>
+                </header>
+
+                <!-- SHOWREEL HERO -->
+                <div class="showreel-hero" aria-label="Showreel principal">
+                    <div class="showreel-thumb" onclick="openMediaModal('https://player.vimeo.com/video/1187397152', 'Showreel — Antônio Henrique', 'vimeo')" role="button" tabindex="0" aria-label="Reproduzir Showreel principal">
+                        <img
+                            src="https://vumbnail.com/1187397152_large.jpg"
+                            alt="Showreel — Antônio Henrique 2025"
+                            class="showreel-bg-img"
+                            loading="lazy"
+                            onerror="this.style.display='none'"
+                        >
+                        <div class="showreel-overlay" aria-hidden="true"></div>
+                        <div class="showreel-play-wrap">
+                            <button class="showreel-play-btn" aria-label="Reproduzir showreel" tabindex="-1">
+                                <span class="showreel-play-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                </span>
+                            </button>
+                            <div class="showreel-pulse" aria-hidden="true"></div>
+                        </div>
+                        <div class="showreel-meta">
+                            <span class="showreel-tag">Showreel</span>
+                            <h3 class="showreel-title">Motin Portfolio<span class="accent-dot">.</span></h3>
+                            <p class="showreel-year">2025</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid de outros vídeos -->
+                <div class="video-grid" role="list">
+
+                    <article class="video-item" onclick="openMediaModal('https://player.vimeo.com/video/1146185264', 'Portfolio Video 2024', 'vimeo')" role="listitem button" tabindex="0" aria-label="Ver Portfolio Video 2024">
+                        <div class="video-thumb">
+                            <img src="https://vumbnail.com/1146185264_large.jpg" alt="Portfolio Video 2024" class="img-responsive" loading="lazy">
+                            <div class="video-play-overlay" aria-hidden="true">
+                                <span class="video-play-icon">►</span>
+                            </div>
+                        </div>
+                        <p class="video-title">Video Portfolio</p>
+                    </article>
+
+                    <article class="video-item" onclick="openMediaModal('https://player.vimeo.com/video/452013643', 'Sumahaze 2017', 'vimeo')" role="listitem button" tabindex="0" aria-label="Ver Sumahaze 2017">
+                        <div class="video-thumb">
+                            <img src="https://vumbnail.com/452013643_large.jpg" alt="Sumahaze 2017" class="img-responsive" loading="lazy">
+                            <div class="video-play-overlay" aria-hidden="true">
+                                <span class="video-play-icon">►</span>
+                            </div>
+                        </div>
+                        <p class="video-title">Sumahaze 2017</p>
+                    </article>
+
+                    <article class="video-item" onclick="openMediaModal('https://player.vimeo.com/video/1084351301', 'Evento VM INK 2018', 'vimeo')" role="listitem button" tabindex="0" aria-label="Ver Evento VM INK 2018">
+                        <div class="video-thumb">
+                            <img src="https://vumbnail.com/1084351301_large.jpg" alt="Orchestral Soundtrack" class="img-responsive" loading="lazy">
+                            <div class="video-play-overlay" aria-hidden="true">
+                                <span class="video-play-icon">►</span>
+                            </div>
+                        </div>
+                        <p class="video-title">Orchestral Soundtrack</p>
+                    </article>
+
+                    <article class="video-item" onclick="openMediaModal('https://player.vimeo.com/video/452016836', 'Orchestral Soundtrack', 'vimeo')" role="listitem button" tabindex="0" aria-label="Ver Orchestral Soundtrack">
+                        <div class="video-thumb">
+                            <img src="https://vumbnail.com/452016836_large.jpg" alt="Evento VM INK 2018" class="img-responsive" loading="lazy">
+                            <div class="video-play-overlay" aria-hidden="true">
+                                <span class="video-play-icon">►</span>
+                            </div>
+                        </div>
+                        <p class="video-title">Evento VM INK 2018</p>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             AUDIO — PIZZADELIC
+        ══════════════════════════════════════════ -->
+        <section id="audio" class="section" aria-label="Música — Pizzadelic">
+            <div class="container">
+                <div class="audio-wrapper">
+                    <div class="audio-content">
+                        <p class="section-eyebrow">06 — Música</p>
+                        <h2 class="audio-heading">Pizzadelic<span class="accent-dot">.</span></h2>
+                        <p class="audio-desc">Compositor, produtor musical e mente criativa por trás do alter ego Pizzadelic. Uma identidade artística única que mistura o alternativo, o eletrônico e o pop experimental — com uma assinatura sonora pessoal e envolvente. Cada lançamento é uma experiência coletiva, com amigos e artistas convidados trazendo novas camadas às músicas.</p>
+                        <div class="audio-tags" aria-label="Gêneros musicais">
+                            <span class="audio-tag">Alternativo</span>
+                            <span class="audio-tag">Eletrônico</span>
+                            <span class="audio-tag">Pop Experimental</span>
+                        </div>
+                    </div>
+                    <div class="spotify-wrapper">
+                        <iframe
+                            title="Pizzadelic no Spotify"
+                            style="border-radius:16px"
+                            src="https://open.spotify.com/embed/artist/42GRQ5uDSeHGl1qAf5bIxj?utm_source=generator&theme=0"
+                            width="100%"
+                            height="352"
+                            frameBorder="0"
+                            allowfullscreen=""
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             SOBRE — STUDIO
+        ══════════════════════════════════════════ -->
+        <section id="studio" class="section section--dark" aria-label="Sobre Antônio Henrique">
+            <div class="container">
+                <div class="about-wrapper">
+
+                    <div class="about-image-col">
+                        <figure class="about-figure">
+                            <img src="src/img/me.jpg" alt="Antônio Henrique — Designer e Diretor de Arte" class="about-profile-img" loading="lazy">
+                            <div class="about-image-accent" aria-hidden="true"></div>
+                        </figure>
+                    </div>
+
+                    <div class="about-content-col">
+                        <p class="section-eyebrow">07 — Sobre</p>
+                        <h2 class="about-heading">
+                            Antônio<br>Henrique<span class="accent-dot">,</span><br>
+                            <em class="about-title-accent">designer.</em>
+                        </h2>
+                        <div class="about-text">
+                            <p>Liderança criativa e definição de diretrizes visuais com foco na potencialização do branding e excelência do design digital. Orquestro a sinergia entre o core estratégico do cliente e a estética refinada.</p>
+                            <p>Processo criativo em 360°, dominando o ciclo Full-Funnel: do briefing estratégico à execução tática e gestão de assets em canais digitais. Know-how em Publicidade & Propaganda aliado à proficiência nas ferramentas de mercado.</p>
+                        </div>
+                        <ul class="skills-list" aria-label="Competências">
+                            <li class="skill-chip">Designer</li>
+                            <li class="skill-chip">Diretor de Arte</li>
+                            <li class="skill-chip">Videomaker</li>
+                            <li class="skill-chip">Fotógrafo</li>
+                            <li class="skill-chip">Social Media</li>
+                        </ul>
+                        <div class="about-tools" aria-label="Ferramentas">
+                            <span class="tools-label">Ferramentas:</span>
+                            <span class="tools-list">Adobe Suite · Figma · CapCut · Meta Ads</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════
+             CONTATO
+        ══════════════════════════════════════════ -->
+        <section id="contact" class="section contact-section" aria-label="Contato">
+            <div class="contact-grain" aria-hidden="true"></div>
+            <div class="container contact-wrapper">
+                <p class="section-eyebrow contact-eyebrow">08 — Contato</p>
+                <h2 class="contact-heading">
+                    Vamos nos<br>
+                    <em>conectar<span class="accent-dot">?</span></em>
+                </h2>
+                <p class="contact-desc">Disponível para freelance, colaborações e projetos de longa duração.</p>
+
+                <nav class="social-links" aria-label="Redes sociais">
+                    <a href="https://www.instagram.com/nuvensgordas/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram — @nuvensgordas">
+                        <div class="social-icon-wrap">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                        </div>
+                        <span>Instagram</span>
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/antoniohenriquedesign/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn — Antônio Henrique">
+                        <div class="social-icon-wrap">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                        </div>
+                        <span>LinkedIn</span>
+                    </a>
+
+                    <a href="https://www.behance.net/nuvensgordas" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Behance — nuvensgordas">
+                        <div class="social-icon-wrap">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 11H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2z"></path><path d="M5 11h14v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7z"></path><line x1="12" y1="11" x2="12" y2="20"></line></svg>
+                        </div>
+                        <span>Behance</span>
+                    </a>
+                </nav>
+
+                <div class="contact-cta-line" aria-hidden="true"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ══════════════════════════════════════════
+         FOOTER
+    ══════════════════════════════════════════ -->
+    <footer role="contentinfo">
+        <div class="container footer-container">
+            <span class="footer-logo">AH<span class="logo-dot">.</span></span>
+            <p class="footer-copy">© 2025 Antônio Henrique. Todos os direitos reservados.</p>
+            <a href="#" class="footer-top" aria-label="Voltar ao topo">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path d="M7 13V1M1 7l6-6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Topo
+            </a>
+        </div>
+    </footer>
+
+    <!-- ══════════════════════════════════════════
+         MODAL DE CLIENTE (Empresas Destaque)
+    ══════════════════════════════════════════ -->
+    <div id="client-modal" class="modal client-modal" role="dialog" aria-modal="true" aria-label="Detalhes do cliente">
+        <div class="modal-backdrop" onclick="closeClientModal()" aria-hidden="true"></div>
+        <div class="client-modal-content">
+            <button class="close-modal" onclick="closeClientModal()" aria-label="Fechar">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                    <path d="M1 1l16 16M17 1L1 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <div class="client-modal-body" id="client-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         MODAL UNIFICADO
+    ══════════════════════════════════════════ -->
+    <div id="media-modal" class="modal" role="dialog" aria-modal="true" aria-label="Visualizador de mídia">
+        <div class="modal-backdrop" onclick="closeModal('media-modal')" aria-hidden="true"></div>
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('media-modal')" aria-label="Fechar">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                    <path d="M1 1l16 16M17 1L1 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <button class="modal-nav nav-prev" onclick="changeGalleryImage(-1)" aria-label="Imagem anterior">‹</button>
+            <div class="modal-body" id="modal-body-content"></div>
+            <button class="modal-nav nav-next" onclick="changeGalleryImage(1)" aria-label="Próxima imagem">›</button>
+        </div>
+    </div>
+
+    <script src="src/script/script.js"></script>
+</body>
+</html>
