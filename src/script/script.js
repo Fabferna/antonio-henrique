@@ -1,741 +1,623 @@
 /**
- * script.js — Antônio Henrique Portfólio
- * ─────────────────────────────────────────────
- * Módulos:
- *   1. Page Loader
- *   2. Cursor Magnético
- *   3. Smart Navbar (scroll hide/show + scrolled state)
- *   4. Mobile Menu
- *   5. Hero Animations (GSAP)
- *   6. Scroll Reveal (GSAP ScrollTrigger)
- *   7. Carrossel Infinito (RAF-based, dinâmico)
- *   8. Counter Animation (stats)
- *   9. Galeria & Modal (Social / Foto / Vídeo)
- *  10. Keyboard & Acessibilidade
- * ─────────────────────────────────────────────
+ * Antônio Henrique — Portfólio
+ * JavaScript sem dependências. Módulos:
+ *   1. Ambiente (reduced motion, ponteiro fino)
+ *   2. Header (estado no scroll, esconder/mostrar, seção ativa)
+ *   3. Menu móvel (<dialog>)
+ *   4. Revelação no scroll
+ *   5. Rail de cartazes (arrastar com inércia, teclado, progresso)
+ *   6. Vídeos sob demanda (só tocam quando visíveis)
+ *   7. Cursor contextual com mola
+ *   8. Pilha de cartazes do hero (parallax com mola)
+ *   9. Índice de vídeos (miniatura que segue o cursor)
+ *  10. Modais: mídia, galeria e clientes
+ *
+ * API pública mantida (usada por testes e por chamadas antigas):
+ *   openMediaModal(src, title, type) · openGallery(type, startIndex)
+ *   changeGalleryImage(dir) · closeModal() · openClientModal(key) · closeClientModal()
  */
 
-/* ═══════════════════════════════════════════════
-   AGUARDA GSAP E DOM
-═══════════════════════════════════════════════ */
-function init() {
-    if (typeof gsap === 'undefined') {
-        // GSAP ainda carregando — retry em 50ms
-        setTimeout(init, 50);
-        return;
+(() => {
+    'use strict';
+
+    /* ═════════════ 1. AMBIENTE ═════════════ */
+    const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mqFine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const reduceMotion = () => mqReduce.matches;
+    const finePointer = () => mqFine.matches;
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+
+    /** Mola crítica simples: segue um alvo com velocidade, para animações decorativas */
+    function createSpring({ stiffness = 0.12, damping = 0.78 } = {}) {
+        return { x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0,
+            step() {
+                this.vx = (this.vx + (this.tx - this.x) * stiffness) * damping;
+                this.vy = (this.vy + (this.ty - this.y) * stiffness) * damping;
+                this.x += this.vx; this.y += this.vy;
+                return Math.abs(this.vx) + Math.abs(this.vy) + Math.abs(this.tx - this.x) + Math.abs(this.ty - this.y) > 0.05;
+            },
+            snap(x, y) { this.x = this.tx = x; this.y = this.ty = y; this.vx = this.vy = 0; }
+        };
     }
-    gsap.registerPlugin(ScrollTrigger);
-    bootstrap();
-}
 
-document.addEventListener('DOMContentLoaded', init);
+    function escapeHTML(str) {
+        return String(str)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
 
+    /* ═════════════ 2. HEADER ═════════════ */
+    function initHeader() {
+        const header = $('.l-header');
+        if (!header) return;
+        let last = window.scrollY;
+        let ticking = false;
 
-/* ═══════════════════════════════════════════════
-   1. PAGE LOADER
-═══════════════════════════════════════════════ */
-function initLoader() {
-    const loader   = document.getElementById('page-loader');
-    const progress = loader?.querySelector('.loader-progress');
-    if (!loader) return;
+        const update = () => {
+            const y = window.scrollY;
+            header.classList.toggle('is-scrolled', y > 24);
+            const goingDown = y > last + 4;
+            const goingUp = y < last - 4;
+            if (goingDown && y > 400) header.classList.add('is-hidden');
+            else if (goingUp || y < 400) header.classList.remove('is-hidden');
+            last = y;
+            ticking = false;
+        };
+        window.addEventListener('scroll', () => {
+            if (!ticking) { requestAnimationFrame(update); ticking = true; }
+        }, { passive: true });
+        update();
 
-    // Anima a barra de progresso
-    gsap.to(progress, {
-        width: '100%',
-        duration: 1.2,
-        ease: 'power2.out',
-        onComplete: () => {
-            gsap.to(loader, {
-                opacity: 0,
-                y: -20,
-                duration: 0.5,
-                delay: 0.15,
-                ease: 'power2.in',
-                onComplete: () => {
-                    loader.classList.add('hidden');
-                    loader.setAttribute('aria-hidden', 'true');
-                    initHeroAnimation();
+        // Link da seção ativa
+        const links = $$('.l-header__links a');
+        const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                const link = map.get(entry.target.id);
+                if (!link) return;
+                if (entry.isIntersecting) {
+                    links.forEach(l => l.removeAttribute('aria-current'));
+                    link.setAttribute('aria-current', 'true');
                 }
             });
-        }
-    });
-}
-
-
-/* ═══════════════════════════════════════════════
-   2. CURSOR MAGNÉTICO
-═══════════════════════════════════════════════ */
-function initCursor() {
-    const dot  = document.querySelector('.cursor-dot');
-    const ring = document.querySelector('.cursor-ring');
-    if (!dot || !ring) return;
-
-    // Detecta touch device
-    if (window.matchMedia('(hover: none)').matches) return;
-
-    let mouseX = 0, mouseY = 0;
-    let ringX  = 0, ringY  = 0;
-    let raf;
-
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        gsap.set(dot, { x: mouseX, y: mouseY });
-    });
-
-    function animateRing() {
-        ringX += (mouseX - ringX) * 0.12;
-        ringY += (mouseY - ringY) * 0.12;
-        gsap.set(ring, { x: ringX, y: ringY });
-        raf = requestAnimationFrame(animateRing);
-    }
-    animateRing();
-
-    // Hover em interativos — expande o anel
-    const interactives = document.querySelectorAll('a, button, [role="button"], [tabindex="0"]');
-    interactives.forEach(el => {
-        el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
-        el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
-    });
-
-    // Esconde cursor ao sair da janela
-    document.addEventListener('mouseleave', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; });
-    document.addEventListener('mouseenter', () => { dot.style.opacity = '1'; ring.style.opacity = '1'; });
-}
-
-
-/* ═══════════════════════════════════════════════
-   3. SMART NAVBAR
-═══════════════════════════════════════════════ */
-function initNavbar() {
-    const nav   = document.querySelector('.navbar');
-    if (!nav) return;
-
-    let lastScroll = 0;
-    const THRESHOLD = 80;
-
-    window.addEventListener('scroll', () => {
-        const current = window.scrollY;
-
-        // Adiciona classe .scrolled após THRESHOLD
-        nav.classList.toggle('scrolled', current > THRESHOLD);
-
-        // Esconde ao rolar down, mostra ao rolar up
-        if (current > lastScroll && current > THRESHOLD + 50) {
-            nav.classList.add('hidden');
-        } else {
-            nav.classList.remove('hidden');
-        }
-
-        lastScroll = Math.max(0, current);
-    }, { passive: true });
-}
-
-
-/* ═══════════════════════════════════════════════
-   4. MOBILE MENU
-═══════════════════════════════════════════════ */
-function initMobileMenu() {
-    const btn     = document.querySelector('.mobile-menu-btn');
-    const closeBtn = document.querySelector('.close-menu-btn');
-    const overlay = document.getElementById('mobile-nav');
-    if (!btn || !overlay) return;
-
-    function open() {
-        overlay.classList.add('active');
-        btn.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-        document.body.style.overflow = 'hidden';
-        // Anima os links com stagger
-        gsap.fromTo('.mobile-links li', 
-            { x: -30, opacity: 0 },
-            { x: 0, opacity: 1, stagger: 0.06, duration: 0.4, ease: 'power2.out', delay: 0.1 }
-        );
+        }, { rootMargin: '-45% 0px -50% 0px' });
+        map.forEach((_, id) => { const s = document.getElementById(id); if (s) io.observe(s); });
+        // No topo, nenhum link fica ativo
+        const hero = document.getElementById('topo');
+        if (hero) new IntersectionObserver(([e]) => {
+            if (e.isIntersecting) links.forEach(l => l.removeAttribute('aria-current'));
+        }, { rootMargin: '-45% 0px -50% 0px' }).observe(hero);
     }
 
-    function close() {
-        overlay.classList.remove('active');
-        btn.classList.remove('open');
-        btn.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-    }
+    /* ═════════════ 3. MENU MÓVEL ═════════════ */
+    function initMenu() {
+        const dialog = $('#menu');
+        const toggle = $('.c-menu-toggle');
+        if (!dialog || !toggle) return;
+        $$('.c-menu__list li', dialog).forEach((li, i) => li.style.setProperty('--i', i));
 
-    btn.addEventListener('click', () => overlay.classList.contains('active') ? close() : open());
-    if (closeBtn) closeBtn.addEventListener('click', close);
-
-    // Fecha ao clicar em um link
-    overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
-
-    // Fecha com ESC
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && overlay.classList.contains('active')) close();
-    });
-}
-
-
-/* ═══════════════════════════════════════════════
-   5. HERO ANIMATIONS (GSAP)
-═══════════════════════════════════════════════ */
-function initHeroAnimation() {
-    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-
-    // Palavras do título fazem reveal de baixo para cima
-    tl.to('.hero-word', {
-        y: 0, opacity: 1,
-        stagger: 0.15,
-        duration: 1.1,
-    })
-    .to('.hero-title-dot', {
-        y: 0, opacity: 1,
-        duration: 0.6,
-    }, '-=0.5')
-    .to('.hero-meta', {
-        y: 0, opacity: 1,
-        duration: 0.6,
-    }, '-=0.8')
-    .to('.reveal-fade', {
-        y: 0, opacity: 1,
-        stagger: 0.1,
-        duration: 0.7,
-    }, '-=0.5')
-    .to('.hero-scroll-cta', {
-        opacity: 1,
-        duration: 0.5,
-    }, '-=0.2');
-
-    // Counter animation para as stats
-    initCounters();
-}
-
-
-/* ═══════════════════════════════════════════════
-   6. SCROLL REVEAL (GSAP ScrollTrigger)
-═══════════════════════════════════════════════ */
-function initScrollReveal() {
-    // Section headers
-    gsap.utils.toArray('.section-header').forEach(el => {
-        gsap.fromTo(el,
-            { y: 50, opacity: 0 },
-            {
-                y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
-                scrollTrigger: { trigger: el, start: 'top 80%', once: true }
-            }
-        );
-    });
-
-    // Cards com stagger
-    const cardGroups = gsap.utils.toArray('.projects-grid, .video-grid, .subsection');
-    cardGroups.forEach(group => {
-        const cards = group.querySelectorAll('.project-card, .video-item');
-        gsap.fromTo(cards,
-            { y: 40, opacity: 0 },
-            {
-                y: 0, opacity: 1,
-                stagger: 0.07,
-                duration: 0.7, ease: 'power3.out',
-                scrollTrigger: { trigger: group, start: 'top 75%', once: true }
-            }
-        );
-    });
-
-    // Project featured
-    gsap.fromTo('.project-featured',
-        { y: 40, opacity: 0 },
-        {
-            y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
-            scrollTrigger: { trigger: '.project-featured', start: 'top 80%', once: true }
-        }
-    );
-
-    // Showreel hero
-    gsap.fromTo('.showreel-hero',
-        { y: 50, opacity: 0, scale: 0.97 },
-        {
-            y: 0, opacity: 1, scale: 1, duration: 1, ease: 'power3.out',
-            scrollTrigger: { trigger: '.showreel-hero', start: 'top 80%', once: true }
-        }
-    );
-
-    // Audio section
-    gsap.fromTo('.audio-wrapper > *',
-        { y: 40, opacity: 0 },
-        {
-            y: 0, opacity: 1, stagger: 0.15, duration: 0.8, ease: 'power3.out',
-            scrollTrigger: { trigger: '.audio-wrapper', start: 'top 75%', once: true }
-        }
-    );
-
-    // About
-    gsap.fromTo('.about-wrapper > *',
-        { y: 40, opacity: 0 },
-        {
-            y: 0, opacity: 1, stagger: 0.15, duration: 0.9, ease: 'power3.out',
-            scrollTrigger: { trigger: '.about-wrapper', start: 'top 75%', once: true }
-        }
-    );
-
-    // Contact
-    gsap.fromTo('.contact-heading',
-        { y: 60, opacity: 0 },
-        {
-            y: 0, opacity: 1, duration: 1.1, ease: 'power3.out',
-            scrollTrigger: { trigger: '.contact-heading', start: 'top 80%', once: true }
-        }
-    );
-
-    gsap.fromTo('.social-icon',
-        { y: 30, opacity: 0 },
-        {
-            y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: 'power3.out',
-            scrollTrigger: { trigger: '.social-links', start: 'top 85%', once: true }
-        }
-    );
-}
-
-
-/* ═══════════════════════════════════════════════
-   7. CARROSSEL INFINITO (RAF-based, dinâmico)
-═══════════════════════════════════════════════ */
-function initCarousel() {
-    const track = document.getElementById('carousel-track');
-    if (!track) return;
-
-    const slides = Array.from(track.querySelectorAll('.carousel-slide'));
-    const slideCount = slides.length;
-
-    if (slideCount === 0) return;
-
-    // Duplica os slides para loop infinito
-    slides.forEach(slide => {
-        const clone = slide.cloneNode(true);
-        clone.setAttribute('aria-hidden', 'true');
-        clone.setAttribute('tabindex', '-1');
-        // Vídeos clonados: pausar e manter muted
-        clone.querySelectorAll('video').forEach(v => {
-            v.muted = true;
-            v.autoplay = true;
-            v.loop = true;
-            v.play().catch(() => {});
+        toggle.addEventListener('click', () => {
+            dialog.showModal();
+            toggle.setAttribute('aria-expanded', 'true');
+            document.documentElement.style.overflow = 'hidden';
         });
-        track.appendChild(clone);
-    });
-
-    // Calcula o offset correto para o loop (largura de um conjunto de slides)
-    const slideW   = 280; // --slide-w em px (deve bater com a CSS var)
-    const slideGap = 24;  // --slide-gap em px
-    const totalW   = (slideW + slideGap) * slideCount;
-
-    // Velocidade em px/ms
-    const SPEED = 0.4; // px por frame (60fps ≈ 24px/s)
-
-    let position = 0;
-    let isPaused = false;
-    let raf;
-
-    function tick() {
-        if (!isPaused) {
-            position += SPEED;
-            if (position >= totalW) position -= totalW;
-            track.style.transform = `translateX(-${position}px)`;
-        }
-        raf = requestAnimationFrame(tick);
-    }
-
-    tick();
-
-    // Pausa ao hover
-    track.addEventListener('mouseenter', () => { isPaused = true; });
-    track.addEventListener('mouseleave', () => { isPaused = false; });
-
-    // Clique nos slides — abre modal (apenas originais com data-src)
-    track.addEventListener('click', (e) => {
-        const slide = e.target.closest('.carousel-slide[data-src]');
-        if (!slide || slide.getAttribute('aria-hidden') === 'true') return;
-        openMediaModal(
-            slide.dataset.src,
-            slide.dataset.title || '',
-            slide.dataset.type || 'image'
-        );
-    });
-
-    // Keyboard nos slides originais
-    track.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            const slide = e.target.closest('.carousel-slide[data-src]');
-            if (!slide) return;
-            e.preventDefault();
-            openMediaModal(slide.dataset.src, slide.dataset.title || '', slide.dataset.type || 'image');
-        }
-    });
-
-    // Remove animação CSS (JS assume o controle)
-    track.style.animation = 'none';
-    track.style.gap = `${slideGap}px`;
-    track.style.willChange = 'transform';
-}
-
-
-/* ═══════════════════════════════════════════════
-   8. COUNTER ANIMATION (Hero Stats)
-═══════════════════════════════════════════════ */
-function initCounters() {
-    document.querySelectorAll('.stat-num').forEach(el => {
-        const target = parseInt(el.dataset.target, 10) || 0;
-        gsap.fromTo({ val: 0 },
-            { val: target },
-            {
-                val: target,
-                duration: 1.8,
-                ease: 'power2.out',
-                delay: 0.8,
-                onUpdate() {
-                    el.textContent = Math.round(this.targets()[0].val);
-                }
-            }
-        );
-    });
-}
-
-
-/* ═══════════════════════════════════════════════
-   9. GALERIA & MODAL
-═══════════════════════════════════════════════ */
-const GALLERIES = {
-    productDesign: {
-        title: 'Product Design',
-        images: [
-            'src/img/product-design/20.svg',
-            'src/img/product-design/21.svg',
-            'src/img/product-design/22.svg',
-        ]
-    },
-    social: {
-        title: 'Social Media',
-        images: [
-            'src/img/social-midia/7.jpg',
-            'src/img/social-midia/8.jpg',
-            'src/img/social-midia/9.jpg',
-            'src/img/social-midia/10.jpg',
-            'src/img/social-midia/11.jpg',
-        ]
-    },
-    foto: {
-        title: 'Olhar Urbano',
-        images: [
-            'src/img/fotografia/12.jpg',
-            'src/img/fotografia/13.jpg',
-            'src/img/fotografia/14.jpg',
-        ]
-    }
-};
-
-let currentGallery = null;
-let currentIndex   = 0;
-
-const mediaModal  = document.getElementById('media-modal');
-const modalBody   = document.getElementById('modal-body-content');
-const navBtns     = document.querySelectorAll('.modal-nav');
-
-/** Abre galeria (social/foto/productDesign) — startIndex opcional para abrir em imagem específica */
-window.openGallery = function(type, startIndex) {
-    if (!GALLERIES[type]) return;
-    currentGallery = GALLERIES[type];
-    currentIndex   = (typeof startIndex === 'number') ? startIndex : 0;
-    navBtns.forEach(b => b.style.display = 'flex');
-    renderGalleryFrame();
-    showModal();
-};
-
-/** Navega entre frames da galeria */
-window.changeGalleryImage = function(dir) {
-    if (!currentGallery) return;
-    const len = currentGallery.images.length;
-    currentIndex = ((currentIndex + dir) % len + len) % len;
-    renderGalleryFrame();
-};
-
-function renderGalleryFrame() {
-    const src = currentGallery.images[currentIndex];
-    modalBody.innerHTML = `
-        <img 
-            src="${escapeHTML(src)}" 
-            alt="${escapeHTML(currentGallery.title)} — imagem ${currentIndex + 1}"
-            style="max-width:100%;max-height:82vh;object-fit:contain;border-radius:12px;"
-        >
-        <h4>${escapeHTML(currentGallery.title)} <span style="color:var(--text-muted);font-size:0.85em">${currentIndex + 1} / ${currentGallery.images.length}</span></h4>
-    `;
-}
-
-/** Abre modal de mídia única */
-window.openMediaModal = function(src, title, type) {
-    currentGallery = null;
-    navBtns.forEach(b => b.style.display = 'none');
-
-    let html = '';
-
-    if (type === 'vimeo') {
-        html = `
-            <div class="vimeo-container">
-                <iframe 
-                    src="${escapeHTML(src)}?autoplay=1&title=0&byline=0&portrait=0&color=F4E600"
-                    frameborder="0"
-                    allow="autoplay; fullscreen; picture-in-picture"
-                    allowfullscreen
-                    title="${escapeHTML(title)}"
-                ></iframe>
-            </div>
-        `;
-    } else if (type === 'video') {
-        html = `
-            <video 
-                src="${escapeHTML(src)}" 
-                autoplay loop controls playsinline
-                style="width:100%;max-height:82vh;object-fit:contain;border-radius:12px;"
-                aria-label="${escapeHTML(title)}"
-            ></video>
-        `;
-    } else {
-        html = `
-            <img 
-                src="${escapeHTML(src)}" 
-                alt="${escapeHTML(title)}"
-                style="max-width:100%;max-height:82vh;object-fit:contain;border-radius:12px;"
-            >
-        `;
-    }
-
-    modalBody.innerHTML = `
-        ${html}
-        <h4>${escapeHTML(title)}</h4>
-    `;
-
-    showModal();
-};
-
-function showModal() {
-    if (!mediaModal) return;
-    mediaModal.style.display = 'flex';
-    // Pequeno delay para transição suave
-    requestAnimationFrame(() => {
-        mediaModal.classList.add('active');
-        gsap.fromTo('.modal-content',
-            { scale: 0.94, opacity: 0 },
-            { scale: 1, opacity: 1, duration: 0.4, ease: 'power3.out' }
-        );
-    });
-    document.body.style.overflow = 'hidden';
-    // Foca no botão de fechar para acessibilidade
-    setTimeout(() => document.querySelector('.close-modal')?.focus(), 100);
-}
-
-/** Fecha modal */
-window.closeModal = function() {
-    if (!mediaModal) return;
-    gsap.to('.modal-content', {
-        scale: 0.96, opacity: 0, duration: 0.25, ease: 'power2.in',
-        onComplete: () => {
-            mediaModal.style.display = 'none';
-            mediaModal.classList.remove('active');
-            if (modalBody) modalBody.innerHTML = '';
-            document.body.style.overflow = '';
-            currentGallery = null;
-        }
-    });
-};
-
-// Fecha ao clicar no backdrop
-mediaModal?.querySelector('.modal-backdrop')?.addEventListener('click', closeModal);
-
-// Fecha com ESC
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && mediaModal?.classList.contains('active')) {
-        closeModal();
-    }
-    // Navega na galeria com setas do teclado
-    if (e.key === 'ArrowLeft' && currentGallery) changeGalleryImage(-1);
-    if (e.key === 'ArrowRight' && currentGallery) changeGalleryImage(1);
-});
-
-/** Sanitização simples para prevenir XSS */
-function escapeHTML(str) {
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
-
-
-/* ═══════════════════════════════════════════════
-   10. KEYBOARD & ACESSIBILIDADE
-═══════════════════════════════════════════════ */
-function initA11y() {
-    // Cards clicáveis via teclado
-    document.querySelectorAll('[role="button"][tabindex="0"]').forEach(el => {
-        el.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
+        dialog.addEventListener('close', () => {
+            toggle.setAttribute('aria-expanded', 'false');
+            document.documentElement.style.overflow = '';
+        });
+        dialog.addEventListener('click', e => {
+            if (e.target.closest('[data-close]')) dialog.close();
+            const link = e.target.closest('a[href^="#"]');
+            if (link) {
                 e.preventDefault();
-                el.click();
+                dialog.close();
+                goTo(link.getAttribute('href'));
             }
         });
-    });
+    }
 
-    // Smooth scroll nos links de âncora
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-        a.addEventListener('click', (e) => {
-            const id  = a.getAttribute('href');
-            const target = document.querySelector(id);
-            if (!target) return;
+    /** Navegação por âncora que também move o foco (leitores de tela) */
+    function goTo(hash) {
+        const target = hash === '#topo' ? document.getElementById('topo') : document.querySelector(hash);
+        if (!target) return;
+        target.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
+        if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+        target.focus({ preventScroll: true });
+        history.replaceState(null, '', hash);
+    }
+
+    function initAnchors() {
+        document.addEventListener('click', e => {
+            const a = e.target.closest('a[href^="#"]');
+            if (!a || a.closest('#menu')) return;
+            const hash = a.getAttribute('href');
+            if (hash.length < 2) return;
             e.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth' });
-            // Foca no target para acessibilidade
-            target.setAttribute('tabindex', '-1');
-            target.focus({ preventScroll: true });
+            goTo(hash);
         });
-    });
-}
-
-
-/* ═══════════════════════════════════════════════
-   11. MODAL DE CLIENTES (Empresas Destaque)
-═══════════════════════════════════════════════ */
-
-/**
- * Dados de cada empresa parceira.
- * images: array de caminhos SVG que serão exibidos no modal como galeria.
- * services: lista de serviços prestados para aquela empresa.
- */
-const CLIENT_DATA = {
-    yamaha: {
-        name:     'Yamaha',
-        logo:     'src/img/trabalhei/destaque-yamaha.png',
-        services: ['Identidade Visual', 'Social Media', 'Gestão de Conteúdo', 'Campanha Digital'],
-        images:   [
-            'src/img/trabalhei/destaque-yamaha.svg',
-        ]
-    },
-    egtc: {
-        name:     'EGTC Engetes Infra',
-        logo:     'src/img/trabalhei/destaque-egtc.png',
-        services: ['Branding', 'Design Gráfico', 'Material Institucional'],
-        images:   [
-            'src/img/trabalhei/destaque-egtc.svg',
-        ]
-    },
-    gilbarco: {
-        name:     'Gilbarco Veeder-Root',
-        logo:     'src/img/trabalhei/destaque-gilbarco.png',
-        services: ['Design Gráfico', 'Social Media', 'Campanha Visual'],
-        images:   [
-            'src/img/trabalhei/destaque-gilbarco.svg',
-            'src/img/trabalhei/destaque-gilbarco-2.svg',
-        ]
-    },
-    ciee: {
-        name:     'CIEE RS',
-        logo:     'src/img/trabalhei/destaque-ciee.png',
-        services: ['Identidade Visual', 'Motion Graphics', 'Redes Sociais'],
-        images:   [
-            'src/img/trabalhei/destaque-ciee.svg',
-            'src/img/trabalhei/destaque-ciee-2.svg',
-        ]
     }
-};
 
-const clientModal     = document.getElementById('client-modal');
-const clientModalBody = document.getElementById('client-modal-body');
+    /* ═════════════ 4. REVELAÇÃO NO SCROLL ═════════════ */
+    function initReveal() {
+        if (!('IntersectionObserver' in window)) return;
+        const groups = [
+            '.c-section-head > *',
+            '.s-branding__clients',
+            '.s-branding__grid > li',
+            '.s-more__bento > li',
+            '.c-reel',
+            '.c-index__item',
+            '.s-music__text > *', '.s-music__player',
+            '.s-about__figure', '.s-about__content > *',
+            '.s-contact > *', '.c-rail__controls'
+        ];
+        const els = [];
+        groups.forEach(sel => $$(sel).forEach((el, i) => {
+            el.setAttribute('data-reveal', '');
+            el.style.setProperty('--i', i % 6);
+            els.push(el);
+        }));
+        document.documentElement.classList.add('js-reveal');
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-in');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
+        els.forEach(el => io.observe(el));
+    }
 
-/** Abre o modal de detalhe de uma empresa */
-window.openClientModal = function(key) {
-    const data = CLIENT_DATA[key];
-    if (!data || !clientModal) return;
+    /* ═════════════ 5. RAIL DE CARTAZES ═════════════ */
+    function initRail() {
+        const rail = $('[data-rail]');
+        if (!rail) return;
+        const viewport = $('[data-rail-viewport]', rail);
+        const track = $('[data-rail-track]', rail);
+        const items = $$('.c-poster', track);
+        const bar = $('[data-rail-progress]', rail);
+        const current = $('[data-rail-current]', rail);
+        const prev = $('[data-rail-prev]', rail);
+        const next = $('[data-rail-next]', rail);
 
-    // Constrói os chips de serviços
-    const serviceChips = data.services
-        .map(s => `<span class="cm-service-chip">${escapeHTML(s)}</span>`)
-        .join('');
+        let skew = 0;
+        let skewRaf = 0;
+        let lastLeft = viewport.scrollLeft;
+        let lastT = performance.now();
 
-    // Constrói a galeria de imagens SVG
-    const galleryItems = data.images
-        .map((src, i) => `
-            <div class="cm-gallery-item">
-                <img src="${escapeHTML(src)}"
-                     alt="${escapeHTML(data.name)} — trabalho ${i + 1}"
-                     loading="lazy">
-            </div>
-        `).join('');
+        // Progresso, contador e inclinação proporcional à velocidade
+        const onScroll = () => {
+            const max = viewport.scrollWidth - viewport.clientWidth;
+            const p = max > 0 ? viewport.scrollLeft / max : 0;
+            bar.style.transform = `scaleX(${0.05 + p * 0.95})`;
+            const idx = nearestIndex();
+            current.textContent = String(idx + 1).padStart(2, '0');
+            prev.disabled = viewport.scrollLeft <= 2;
+            next.disabled = viewport.scrollLeft >= max - 2;
 
-    clientModalBody.innerHTML = `
-        <div class="cm-header">
-            <img src="${escapeHTML(data.logo)}"
-                 alt="${escapeHTML(data.name)}"
-                 class="cm-logo">
-            <div class="cm-meta">
-                <h3 class="cm-company-name">${escapeHTML(data.name)}</h3>
-                <div class="cm-services" aria-label="Serviços prestados">
-                    ${serviceChips}
-                </div>
-            </div>
-        </div>
-        <div class="cm-gallery">
-            ${galleryItems}
-        </div>
-    `;
+            if (!reduceMotion()) {
+                const now = performance.now();
+                const v = (viewport.scrollLeft - lastLeft) / Math.max(1, now - lastT);
+                lastLeft = viewport.scrollLeft; lastT = now;
+                skew = clamp(skew + v * -1.4, -6, 6);
+                if (!skewRaf) skewRaf = requestAnimationFrame(relaxSkew);
+            }
+        };
+        const relaxSkew = () => {
+            skew *= 0.86;
+            track.style.transform = Math.abs(skew) > 0.02 ? `skewX(${skew.toFixed(3)}deg)` : '';
+            skewRaf = Math.abs(skew) > 0.02 ? requestAnimationFrame(relaxSkew) : 0;
+        };
 
-    // Exibe o modal com animação
-    clientModal.style.display = 'flex';
-    requestAnimationFrame(() => {
-        clientModal.classList.add('active');
-        if (typeof gsap !== 'undefined') {
-            gsap.fromTo('.client-modal-content',
-                { scale: 0.94, opacity: 0, y: 20 },
-                { scale: 1, opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }
-            );
+        function nearestIndex() {
+            const left = viewport.scrollLeft + parseFloat(getComputedStyle(viewport).paddingLeft);
+            let best = 0, bestD = Infinity;
+            items.forEach((it, i) => {
+                const d = Math.abs(it.offsetLeft - left);
+                if (d < bestD) { bestD = d; best = i; }
+            });
+            return best;
         }
-    });
-    document.body.style.overflow = 'hidden';
-    setTimeout(() => clientModal.querySelector('.close-modal')?.focus(), 150);
-};
 
-/** Fecha o modal de cliente */
-window.closeClientModal = function() {
-    if (!clientModal) return;
-    if (typeof gsap !== 'undefined') {
-        gsap.to('.client-modal-content', {
-            scale: 0.96, opacity: 0, y: 10, duration: 0.25, ease: 'power2.in',
-            onComplete: () => {
-                clientModal.style.display = 'none';
-                clientModal.classList.remove('active');
-                if (clientModalBody) clientModalBody.innerHTML = '';
-                document.body.style.overflow = '';
+        function scrollToIndex(i) {
+            const it = items[clamp(i, 0, items.length - 1)];
+            const pad = parseFloat(getComputedStyle(viewport).paddingLeft);
+            viewport.scrollTo({ left: it.offsetLeft - pad, behavior: reduceMotion() ? 'auto' : 'smooth' });
+        }
+
+        function page(dir) {
+            const target = viewport.scrollLeft + dir * viewport.clientWidth * 0.8;
+            const pad = parseFloat(getComputedStyle(viewport).paddingLeft);
+            let idx = 0;
+            items.forEach((it, i) => { if (it.offsetLeft - pad <= target + 1) idx = i; });
+            scrollToIndex(dir > 0 ? Math.max(idx, nearestIndex() + 1) : Math.min(idx, nearestIndex() - 1));
+        }
+
+        viewport.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+        prev.addEventListener('click', () => page(-1));
+        next.addEventListener('click', () => page(1));
+
+        // Teclado: setas avançam um cartaz, Home/End vão às pontas
+        viewport.addEventListener('keydown', e => {
+            const map = { ArrowRight: 1, ArrowLeft: -1 };
+            if (e.key in map) {
+                e.preventDefault();
+                scrollToIndex(nearestIndex() + map[e.key]);
+            } else if (e.key === 'Home') { e.preventDefault(); scrollToIndex(0); }
+            else if (e.key === 'End') { e.preventDefault(); scrollToIndex(items.length - 1); }
+        });
+
+        // Arrastar com o mouse + inércia (touch usa a rolagem nativa)
+        let down = false, moved = 0, startX = 0, startLeft = 0, vel = 0, lastX = 0, lastMoveT = 0, inertiaRaf = 0;
+        viewport.addEventListener('pointerdown', e => {
+            if (e.pointerType !== 'mouse' || e.button !== 0) return;
+            cancelAnimationFrame(inertiaRaf);
+            down = true; moved = 0;
+            startX = lastX = e.clientX; startLeft = viewport.scrollLeft;
+            vel = 0; lastMoveT = performance.now();
+        });
+        window.addEventListener('pointermove', e => {
+            if (!down) return;
+            const dx = e.clientX - startX;
+            if (!moved && Math.abs(dx) < 6) return;
+            if (!moved) { rail.classList.add('is-dragging'); viewport.setPointerCapture?.(e.pointerId); }
+            moved = Math.abs(dx);
+            viewport.scrollLeft = startLeft - dx;
+            const now = performance.now();
+            vel = (e.clientX - lastX) / Math.max(1, now - lastMoveT);
+            lastX = e.clientX; lastMoveT = now;
+        });
+        const release = () => {
+            if (!down) return;
+            down = false;
+            requestAnimationFrame(() => rail.classList.remove('is-dragging'));
+            if (moved && !reduceMotion() && performance.now() - lastMoveT < 80) {
+                let v = vel * 16; // px por quadro
+                const glide = () => {
+                    viewport.scrollLeft -= v;
+                    v *= 0.94;
+                    if (Math.abs(v) > 0.4) inertiaRaf = requestAnimationFrame(glide);
+                };
+                inertiaRaf = requestAnimationFrame(glide);
+            }
+        };
+        window.addEventListener('pointerup', release);
+        window.addEventListener('pointercancel', release);
+        // Um arrasto não pode virar clique
+        viewport.addEventListener('click', e => {
+            if (moved > 6) { e.preventDefault(); e.stopPropagation(); moved = 0; }
+        }, true);
+        viewport.addEventListener('dragstart', e => e.preventDefault());
+
+        onScroll();
+    }
+
+    /* ═════════════ 6. VÍDEOS SOB DEMANDA ═════════════ */
+    function initVideos() {
+        const videos = $$('video[data-src]');
+        if (!videos.length || !('IntersectionObserver' in window)) return;
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(({ target: v, isIntersecting }) => {
+                if (isIntersecting && !reduceMotion()) {
+                    if (!v.src) { v.src = v.dataset.src; v.preload = 'auto'; }
+                    v.play().catch(() => {});
+                } else if (!v.paused) {
+                    v.pause();
+                }
+            });
+        }, { rootMargin: '0px 200px', threshold: 0.25 });
+        videos.forEach(v => io.observe(v));
+        mqReduce.addEventListener?.('change', () => { if (reduceMotion()) videos.forEach(v => v.pause()); });
+        document.addEventListener('visibilitychange', () => { if (document.hidden) videos.forEach(v => v.pause()); });
+    }
+
+    /* ═════════════ 7. CURSOR CONTEXTUAL ═════════════ */
+    function initCursor() {
+        const cursor = $('.c-cursor');
+        const label = $('.c-cursor__label');
+        if (!cursor || !finePointer()) return;
+        const s = createSpring({ stiffness: 0.2, damping: 0.72 });
+        let raf = 0, activeEl = null, seen = false;
+
+        const loop = () => {
+            const moving = s.step();
+            cursor.style.transform = `translate3d(${s.x}px, ${s.y}px, 0)`;
+            raf = moving ? requestAnimationFrame(loop) : 0;
+        };
+        window.addEventListener('pointermove', e => {
+            if (e.pointerType !== 'mouse') return;
+            if (!seen || reduceMotion()) { s.snap(e.clientX, e.clientY); seen = true; }
+            s.tx = e.clientX; s.ty = e.clientY;
+            if (!raf) raf = requestAnimationFrame(loop);
+        }, { passive: true });
+
+        document.addEventListener('pointerover', e => {
+            const el = e.target.closest('[data-cursor]');
+            if (el === activeEl) return;
+            activeEl?.removeAttribute('data-cursor-active');
+            activeEl = el;
+            if (el) {
+                label.textContent = el.dataset.cursor;
+                el.setAttribute('data-cursor-active', '');
+                cursor.classList.add('is-active');
+            } else {
+                cursor.classList.remove('is-active');
             }
         });
-    } else {
-        clientModal.style.display = 'none';
-        clientModal.classList.remove('active');
-        if (clientModalBody) clientModalBody.innerHTML = '';
-        document.body.style.overflow = '';
+        document.addEventListener('pointerdown', () => cursor.classList.add('is-pressed'));
+        document.addEventListener('pointerup', () => cursor.classList.remove('is-pressed'));
+        document.documentElement.addEventListener('pointerleave', () => cursor.classList.remove('is-active'));
     }
-};
 
-// Fecha com ESC
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && clientModal?.classList.contains('active')) {
-        closeClientModal();
+    /* ═════════════ 8. PILHA DO HERO ═════════════ */
+    function initHeroStack() {
+        const stack = $('[data-tilt]');
+        if (!stack || !finePointer() || reduceMotion()) return;
+        const s = createSpring({ stiffness: 0.06, damping: 0.82 });
+        let raf = 0, visible = true;
+        const loop = () => {
+            const moving = s.step();
+            stack.style.setProperty('--mx', s.x.toFixed(3));
+            stack.style.setProperty('--my', s.y.toFixed(3));
+            raf = moving ? requestAnimationFrame(loop) : 0;
+        };
+        new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(stack.parentElement);
+        window.addEventListener('pointermove', e => {
+            if (!visible) return;
+            s.tx = (e.clientX / window.innerWidth - 0.5) * 2;
+            s.ty = (e.clientY / window.innerHeight - 0.5) * 2;
+            if (!raf) raf = requestAnimationFrame(loop);
+        }, { passive: true });
     }
-});
 
+    /* ═════════════ 9. ÍNDICE DE VÍDEOS ═════════════ */
+    function initIndex() {
+        const list = $('[data-index]');
+        const float = $('[data-index-float]');
+        if (!list || !float) return;
+        const img = $('img', float);
+        const mq = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 900px)');
+        const s = createSpring({ stiffness: 0.1, damping: 0.75 });
+        let raf = 0, over = false, scale = 0.85;
 
-/* ═══════════════════════════════════════════════
-   BOOTSTRAP — Inicialização ordenada
-═══════════════════════════════════════════════ */
-function bootstrap() {
-    initLoader();      // 1. Loader (dispara hero animation no callback)
-    initCursor();      // 2. Cursor magnético
-    initNavbar();      // 3. Smart navbar
-    initMobileMenu();  // 4. Menu mobile
-    initScrollReveal();// 5. Scroll reveal com ScrollTrigger
-    initCarousel();    // 6. Carrossel RAF
-    initA11y();        // 7. Acessibilidade
-}
+        const loop = () => {
+            const moving = s.step();
+            const target = over ? 1 : 0.85;
+            scale += (target - scale) * 0.18;
+            const tilt = clamp(s.vx * 0.6, -8, 8);
+            float.style.transform = `translate3d(${s.x}px, ${s.y}px, 0) translate(2rem, -50%) rotate(${tilt}deg) scale(${scale.toFixed(3)})`;
+            raf = moving || Math.abs(target - scale) > 0.002 ? requestAnimationFrame(loop) : 0;
+        };
+        list.addEventListener('pointermove', e => {
+            if (!mq.matches || e.pointerType !== 'mouse') return;
+            if (!over && !raf) s.snap(e.clientX, e.clientY);
+            s.tx = e.clientX; s.ty = e.clientY;
+            if (reduceMotion()) s.snap(e.clientX, e.clientY);
+            if (!raf) raf = requestAnimationFrame(loop);
+        });
+        list.addEventListener('pointerover', e => {
+            const btn = e.target.closest('.c-index__button');
+            if (!btn || !mq.matches) return;
+            if (img.getAttribute('src') !== btn.dataset.thumb) img.src = btn.dataset.thumb;
+            over = true;
+            float.classList.add('is-visible');
+            if (!raf) raf = requestAnimationFrame(loop);
+        });
+        list.addEventListener('pointerleave', () => {
+            over = false;
+            float.classList.remove('is-visible');
+            if (!raf) raf = requestAnimationFrame(loop);
+        });
+    }
+
+    /* ═════════════ 10. MODAIS ═════════════ */
+    const GALLERIES = {
+        productDesign: {
+            title: 'Product Design',
+            images: [20, 21, 22].map(n => `src/img/opt/pd-${n}.webp`)
+        },
+        social: {
+            title: 'Social media',
+            images: [7, 8, 9, 10, 11].map(n => `src/img/opt/social-midia--${n}-full.webp`)
+        },
+        foto: {
+            title: 'Olhar urbano',
+            images: [12, 13, 14].map(n => `src/img/opt/fotografia--${n}-full.webp`)
+        }
+    };
+
+    const CLIENT_DATA = {
+        yamaha: {
+            name: 'Yamaha',
+            services: ['Identidade visual', 'Social media', 'Gestão de conteúdo', 'Campanha digital'],
+            images: ['src/img/opt/client-yamaha-1.webp']
+        },
+        egtc: {
+            name: 'EGTC Engetec Infra',
+            services: ['Branding', 'Design gráfico', 'Material institucional'],
+            images: ['src/img/opt/client-egtc-1.webp']
+        },
+        gilbarco: {
+            name: 'Gilbarco Veeder-Root',
+            services: ['Design gráfico', 'Social media', 'Campanha visual'],
+            images: ['src/img/opt/client-gilbarco-1.webp', 'src/img/opt/client-gilbarco-2.webp']
+        },
+        ciee: {
+            name: 'CIEE RS',
+            services: ['Identidade visual', 'Motion graphics', 'Redes sociais'],
+            images: ['src/img/opt/client-ciee-1.webp', 'src/img/opt/client-ciee-2.webp']
+        }
+    };
+
+    const mediaModal = $('#media-modal');
+    const clientModal = $('#client-modal');
+    const stage = $('[data-modal-body]', mediaModal || document);
+    const countEl = $('[data-modal-count]', mediaModal || document);
+    const titleEl = $('#media-modal-title');
+    const prevBtn = $('[data-modal-prev]');
+    const nextBtn = $('[data-modal-next]');
+    let currentGallery = null;
+    let currentIndex = 0;
+    let lastTrigger = null;
+
+    function openDialog(dialog) {
+        lastTrigger = document.activeElement;
+        if (!dialog.open) dialog.showModal();
+        document.documentElement.style.overflow = 'hidden';
+    }
+
+    function onDialogClose(dialog, cleanup) {
+        dialog.addEventListener('close', () => {
+            document.documentElement.style.overflow = '';
+            cleanup();
+            if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus({ preventScroll: true });
+        });
+        dialog.addEventListener('click', e => {
+            // Fechar no X ou ao clicar no "vazio" em volta da mídia
+            if (e.target.closest('[data-close]') || e.target === dialog || e.target.matches('[data-modal-body], .c-client-sheet')) dialog.close();
+        });
+    }
+
+    function renderMedia(src, title, type) {
+        if (type === 'vimeo') {
+            const url = new URL(src);
+            url.search = 'autoplay=1&title=0&byline=0&portrait=0&color=F4E600&dnt=1';
+            return `<div class="c-modal__frame"><iframe src="${escapeHTML(url.toString())}" title="${escapeHTML(title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>`;
+        }
+        if (type === 'video') {
+            const auto = reduceMotion() ? '' : ' autoplay';
+            return `<video src="${escapeHTML(src)}" controls loop playsinline${auto} aria-label="${escapeHTML(title)}"></video>`;
+        }
+        return `<img src="${escapeHTML(src)}" alt="${escapeHTML(title)}" decoding="async">`;
+    }
+
+    function renderGalleryFrame() {
+        const g = currentGallery;
+        const total = g.images.length;
+        const label = `${g.title}, imagem ${currentIndex + 1} de ${total}`;
+        stage.innerHTML = renderMedia(g.images[currentIndex], label, 'image');
+        titleEl.textContent = g.title;
+        countEl.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+    }
+
+    /** Abre uma mídia única (imagem, vídeo local ou Vimeo) */
+    function openMediaModal(src, title, type = 'image') {
+        if (!mediaModal) return;
+        currentGallery = null;
+        prevBtn.hidden = nextBtn.hidden = true;
+        countEl.textContent = '';
+        titleEl.textContent = title || 'Visualizar';
+        stage.innerHTML = renderMedia(src, title || '', type);
+        openDialog(mediaModal);
+    }
+
+    /** Abre uma galeria; startIndex opcional para começar numa imagem específica */
+    function openGallery(type, startIndex) {
+        if (!mediaModal || !GALLERIES[type]) return;
+        currentGallery = GALLERIES[type];
+        currentIndex = typeof startIndex === 'number' ? clamp(startIndex, 0, currentGallery.images.length - 1) : 0;
+        prevBtn.hidden = nextBtn.hidden = false;
+        renderGalleryFrame();
+        openDialog(mediaModal);
+    }
+
+    /** Navega na galeria aberta (dir = -1 ou 1), com loop */
+    function changeGalleryImage(dir) {
+        if (!currentGallery) return;
+        const len = currentGallery.images.length;
+        currentIndex = ((currentIndex + dir) % len + len) % len;
+        if (reduceMotion()) { renderGalleryFrame(); return; }
+        stage.classList.add('is-swapping');
+        setTimeout(() => { renderGalleryFrame(); stage.classList.remove('is-swapping'); }, 120);
+    }
+
+    function closeModal() { if (mediaModal?.open) mediaModal.close(); }
+
+    function openClientModal(key) {
+        const data = CLIENT_DATA[key];
+        const body = $('#client-modal-body');
+        if (!data || !clientModal || !body) return;
+        const chips = data.services.map(s => `<li>${escapeHTML(s)}</li>`).join('');
+        const imgs = data.images.map((src, i) =>
+            `<img src="${escapeHTML(src)}" alt="${escapeHTML(data.name)}: trabalho ${i + 1}" loading="lazy" decoding="async">`).join('');
+        body.innerHTML = `
+            <div class="c-client-sheet__head">
+                <p class="c-label">Cliente</p>
+                <p class="c-client-sheet__name">${escapeHTML(data.name)}</p>
+                <ul class="c-chips" role="list" aria-label="Serviços prestados">${chips}</ul>
+            </div>
+            <div class="c-client-sheet__gallery">${imgs}</div>`;
+        $('#client-modal-title').textContent = data.name;
+        openDialog(clientModal);
+    }
+
+    function closeClientModal() { if (clientModal?.open) clientModal.close(); }
+
+    function initModals() {
+        if (mediaModal) {
+            onDialogClose(mediaModal, () => { stage.innerHTML = ''; currentGallery = null; });
+            prevBtn.addEventListener('click', () => changeGalleryImage(-1));
+            nextBtn.addEventListener('click', () => changeGalleryImage(1));
+            mediaModal.addEventListener('keydown', e => {
+                if (!currentGallery) return;
+                if (e.key === 'ArrowLeft') { e.preventDefault(); changeGalleryImage(-1); }
+                if (e.key === 'ArrowRight') { e.preventDefault(); changeGalleryImage(1); }
+            });
+            // Swipe horizontal no touch
+            let sx = 0, sy = 0;
+            stage.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+            stage.addEventListener('touchend', e => {
+                if (!currentGallery) return;
+                const dx = e.changedTouches[0].clientX - sx;
+                const dy = e.changedTouches[0].clientY - sy;
+                if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) changeGalleryImage(dx < 0 ? 1 : -1);
+            }, { passive: true });
+        }
+        if (clientModal) onDialogClose(clientModal, () => { $('#client-modal-body').innerHTML = ''; });
+
+        // Delegação: qualquer botão com data-media / data-gallery / data-client
+        document.addEventListener('click', e => {
+            const media = e.target.closest('[data-media]');
+            if (media) { openMediaModal(media.dataset.media, media.dataset.title, media.dataset.type); return; }
+            const gallery = e.target.closest('[data-gallery]');
+            if (gallery) { openGallery(gallery.dataset.gallery, Number(gallery.dataset.start) || 0); return; }
+            const client = e.target.closest('[data-client]');
+            if (client) openClientModal(client.dataset.client);
+        });
+    }
+
+    Object.assign(window, { openMediaModal, openGallery, changeGalleryImage, closeModal, openClientModal, closeClientModal });
+
+    /** Miniaturas externas (Vimeo) que falham não deixam ícone quebrado */
+    function initImageFallbacks() {
+        $$('.c-reel__img, .c-index__thumb').forEach(img => {
+            const mark = () => img.classList.add('is-broken');
+            if (img.complete && img.naturalWidth === 0) mark();
+            img.addEventListener('error', mark);
+        });
+    }
+
+    /* ═════════════ BOOT ═════════════ */
+    function boot() {
+        const year = $('[data-year]');
+        if (year) year.textContent = new Date().getFullYear();
+        initHeader();
+        initMenu();
+        initAnchors();
+        initReveal();
+        initRail();
+        initVideos();
+        initCursor();
+        initHeroStack();
+        initIndex();
+        initModals();
+        initImageFallbacks();
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+    else boot();
+})();

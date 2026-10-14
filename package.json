@@ -1,0 +1,15 @@
+{
+  "name": "antonio-henrique-portfolio",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Portfólio de Antônio Henrique — site estático (HTML, CSS e JS sem build).",
+  "scripts": {
+    "serve": "node tests/serve.js",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.56.0"
+  }
+}
